@@ -1,0 +1,27 @@
+name: shader_presets
+description: "Shader presets using shader_buffers"
+version: 0.0.1
+homepage:
+
+environment:
+  sdk: '>=3.2.0 <4.0.0'
+  flutter: ">=1.17.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  shader_buffers:
+    path: ../shader_buffers
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  very_good_analysis: ^5.1.0
+
+
+flutter:
+
+  shaders:
+    - assets/shaders/water.frag
+    - assets/shaders/page_curl.frag

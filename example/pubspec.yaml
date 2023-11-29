@@ -1,0 +1,27 @@
+name: shader_preset_example
+description: "Shader Preset example."
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.2.0 <4.0.0'
+
+dependencies:
+  cupertino_icons: ^1.0.6
+  
+  flutter:
+    sdk: flutter
+
+  shader_presets:
+    path: ../
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  very_good_analysis: ^5.1.0
+
+
+flutter:
+
+  uses-material-design: true
