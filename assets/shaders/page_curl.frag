@@ -11,13 +11,14 @@ uniform vec4 iMouse;
 
 out vec4 fragColor;
 
+uniform float radius;
+
 
 // credits:
 // https://www.shadertoy.com/view/ls3cDB
 
 // ------ START SHADERTOY CODE -----
 #define pi 3.14159265359
-#define radius 0.5
 
 void mainImage( out vec4 fragColor, in vec2 fragCoord )
 {

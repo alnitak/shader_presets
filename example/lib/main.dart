@@ -31,6 +31,11 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  ValueNotifier<List<double>> floatUniforms = ValueNotifier([]);
+  ValueNotifier<ShaderPresetsEnum> preset =
+      ValueNotifier(ShaderPresetsEnum.water);
+  final presetController = ShaderPresetController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -40,13 +45,106 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(32),
-        child: Center(
-          child: ShaderPreset.pageCurl(
-            const Widget1(),
-            const Widget2(),
-          ),
+        child: ValueListenableBuilder(
+          valueListenable: preset,
+          builder: (_, p, __) {
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  color: Colors.yellow,
+                  // width: 600,
+                  height: 700,
+                  child: createPreset(p),
+                ),
+                Wrap(
+                  children: List.generate(
+                    ShaderPresetsEnum.values.length,
+                    (index) {
+                      return ElevatedButton(
+                        onPressed: () {
+                          preset.value = ShaderPresetsEnum.values[index];
+                        },
+                        child: Text(ShaderPresetsEnum.values[index].name),
+                      );
+                    },
+                  ),
+                ),
+                uniformSliders(),
+              ],
+            );
+          },
         ),
       ),
+    );
+  }
+
+  Widget createPreset(ShaderPresetsEnum p) {
+    Widget ret = const SizedBox.shrink();
+    switch (p) {
+      case ShaderPresetsEnum.water:
+        ret = ShaderPreset.water(
+          // const Widget1(),
+          // const Widget2(),
+          // 'assets/dash.png',
+          'assets/flutter.png',
+          presetController: presetController,
+        );
+      case ShaderPresetsEnum.polkaDotsCurtain:
+        ret = ShaderPreset.polkaDotsCurtain(
+          // const Widget1(),
+          // const Widget2(),
+          'assets/dash.png',
+          'assets/flutter.png',
+          presetController: presetController,
+        );
+    }
+    return ret;
+  }
+
+  Widget uniformSliders() {
+    /// Get the preset min-max ranges and set its uniform to the starting range
+    final uniforms = presetController.getUniforms(preset.value);
+
+    /// Build the uniforms list
+    floatUniforms = ValueNotifier(
+      List.generate(uniforms.uniforms.length, (index) {
+        return uniforms.uniforms[index].value;
+      }),
+    );
+
+    /// Build slider for each uniforms
+    return ValueListenableBuilder(
+      valueListenable: floatUniforms,
+      builder: (_, uniform, __) {
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: List.generate(
+            uniforms.uniforms.length,
+            (index) {
+              return Flex(
+                direction: Axis.horizontal,
+                children: [
+                  Text('${uniforms.uniforms[index].name} \t\t'
+                      '${uniform[index].toStringAsFixed(1)}'),
+                  Expanded(
+                    child: Slider(
+                      value: uniform[index],
+                      min: uniforms.uniforms[index].range.start,
+                      max: uniforms.uniforms[index].range.end,
+                      onChanged: (value) {
+                        floatUniforms.value[index] = value;
+                        floatUniforms.value = floatUniforms.value.toList();
+                        presetController.setUniforms(floatUniforms.value);
+                      },
+                    ),
+                  ),
+                ],
+              );
+            },
+          ),
+        );
+      },
     );
   }
 }
