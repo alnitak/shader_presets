@@ -8,5 +8,6 @@ void main() {
         (iTime/iTime) * (iResolution.x/iResolution.x);
 
     ratio = iResolution.x/iResolution.y;
-    fragColor = transition(FlutterFragCoord().xy / iResolution.xy * tmp);
+    vec2 uv = FlutterFragCoord().xy / iResolution.xy * tmp;
+    fragColor = transition(vec2(uv.x, 1.0 - uv.y));
 }

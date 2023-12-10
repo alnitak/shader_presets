@@ -99,6 +99,14 @@ class _MyHomePageState extends State<MyHomePage> {
           'assets/dash.png',
           presetController: presetController,
         );
+      case ShaderPresetsEnum.cube:
+        ret = ShaderPreset.cube(
+          // const Widget1(),
+          // const Widget2(),
+          'assets/flutter.png',
+          'assets/dash.png',
+          presetController: presetController,
+        );
       case ShaderPresetsEnum.polkaDotsCurtain:
         ret = ShaderPreset.polkaDotsCurtain(
           // const Widget1(),

@@ -7,9 +7,9 @@ uniform float progress;
 float ratio;
 
 vec4 getFromColor(vec2 uv) {
-  return texture( iChannel0, uv );
+  return texture( iChannel0, vec2(uv.x, 1.0 - uv.y) );
 }
 
 vec4 getToColor(vec2 uv) {
-  return texture( iChannel1, uv );
+  return texture( iChannel1, vec2(uv.x, 1.0 - uv.y) );
 }
