@@ -5,6 +5,7 @@ import 'package:shader_buffers/shader_buffers.dart';
 enum ShaderPresetsEnum {
   water,
   pageCurl,
+  cube,
   polkaDotsCurtain,
   radial,
 }
@@ -77,6 +78,7 @@ class ShaderPresetController {
             value: 1,
           ), //
         ]);
+
       case ShaderPresetsEnum.pageCurl:
         return Uniforms([
           Uniform(
@@ -86,6 +88,41 @@ class ShaderPresetController {
             value: 0.1,
           ),
         ]);
+
+      case ShaderPresetsEnum.cube:
+        return Uniforms([
+          Uniform(
+            name: 'progress',
+            range: const RangeValues(0, 1),
+            defaultValue: 0,
+            value: 0,
+          ),
+          Uniform(
+            name: 'persp',
+            range: const RangeValues(0, 10),
+            defaultValue: 0.7,
+            value: 0.7,
+          ),
+          Uniform(
+            name: 'unzoom',
+            range: const RangeValues(0, 10),
+            defaultValue: 0.3,
+            value: 0.3,
+          ),
+          Uniform(
+            name: 'reflection',
+            range: const RangeValues(0, 10),
+            defaultValue: 0.4,
+            value: 0.4,
+          ),
+          Uniform(
+            name: 'floating',
+            range: const RangeValues(0, 10),
+            defaultValue: 3,
+            value: 3,
+          ),
+        ]);
+
       case ShaderPresetsEnum.polkaDotsCurtain:
         return Uniforms([
           Uniform(
@@ -113,6 +150,7 @@ class ShaderPresetController {
             value: 0.5,
           ),
         ]);
+
       case ShaderPresetsEnum.radial:
         return Uniforms([
           Uniform(
@@ -152,72 +190,24 @@ class ShaderPreset extends StatelessWidget {
 
   /// Sets the uniform values for the current preset.
   /// Accepts a [Uniforms] or [List<double>] param.
-  void _setUniforms(dynamic uniforms) {
+  void _setUniforms(dynamic newUniforms) {
     assert(
-      uniforms is Uniforms || uniforms is List<double>,
+      newUniforms is Uniforms || newUniforms is List<double>,
       'Please use [Uniforms] or [List<double>]!',
     );
-    var newUniforms = <double>[];
-    switch (preset) {
-      case ShaderPresetsEnum.water:
-        assert(
-          uniforms is List<Object> && uniforms.length == 3,
-          'Water preset only accepts 3 uniforms!',
-        );
-        if (uniforms is Uniforms) {
-          newUniforms = List.generate(
-            uniforms.uniforms.length,
-            (index) => uniforms.uniforms[index].value,
-          );
-        }
-        if (uniforms is List<double>) {
-          for (var i = 0; i < uniforms.length; i++) {
-            this.uniforms.uniforms[i].value = uniforms[i];
-          }
-          newUniforms = uniforms;
-        }
+    assert(
+      newUniforms is List<Object> &&
+          newUniforms.length == uniforms.uniforms.length,
+      '${preset.name} preset only accepts ${uniforms.uniforms.length} uniforms!',
+    );
 
-      case ShaderPresetsEnum.pageCurl:
-        assert(
-          uniforms is List<Object> && uniforms.length == 1,
-          'Water preset only accepts 1 uniforms!',
-        );
-        if (uniforms is Uniforms) {
-          newUniforms = List.generate(
-            uniforms.uniforms.length,
-            (index) => uniforms.uniforms[index].value,
-          );
-        }
-        if (uniforms is List<double>) {
-          for (var i = 0; i < uniforms.length; i++) {
-            this.uniforms.uniforms[i].value = uniforms[i];
-          }
-          newUniforms = uniforms;
-        }
-
-      case ShaderPresetsEnum.polkaDotsCurtain:
-        assert(
-          uniforms is List<double> && uniforms.length == 4,
-          'PolkaDotsCurtainUniforms preset only accepts 4 uniforms!',
-        );
-        if (uniforms is Uniforms) {
-          newUniforms = List.generate(uniforms.uniforms.length,
-              (index) => uniforms.uniforms[index].value);
-        }
-        if (uniforms is List<double>) newUniforms = uniforms;
-
-      case ShaderPresetsEnum.radial:
-        assert(
-          uniforms is List<double> && uniforms.length == 2,
-          'Radial preset only accepts 2 uniforms!',
-        );
-        if (uniforms is Uniforms) {
-          newUniforms = List.generate(uniforms.uniforms.length,
-              (index) => uniforms.uniforms[index].value);
-        }
-        if (uniforms is List<double>) newUniforms = uniforms;
+    var newUniformsList = <double>[];
+    if (newUniforms is Uniforms) {
+      newUniformsList = List.generate(newUniforms.uniforms.length,
+          (index) => newUniforms.uniforms[index].value);
     }
-    mainImage.floatUniforms = newUniforms;
+    if (newUniforms is List<double>) newUniformsList = newUniforms;
+    mainImage.floatUniforms = newUniformsList;
   }
 
   /// Common factory to rule them all
@@ -356,6 +346,35 @@ class ShaderPreset extends StatelessWidget {
   ////////////////////////////////////////
   /// GL Transitions shaders
   ////////////////////////////////////////
+  ///
+  /// Cube shader
+  factory ShaderPreset.cube(
+    dynamic child1,
+    dynamic child2, {
+    Key? key,
+    ShaderPresetController? presetController,
+    double progress = 0,
+    double persp = 0.7,
+    double unzoom = 0.3,
+    double reflection = 0.4,
+    double floating = 3,
+  }) {
+    return ShaderPreset._common(
+      key,
+      'packages/shader_presets/assets/shaders/gl_transitions/cube.frag',
+      ShaderPresetsEnum.cube,
+      [child1, child2],
+      [
+        ('progress', progress),
+        ('persp', persp),
+        ('unzoom', unzoom),
+        ('reflection', reflection),
+        ('floating', floating),
+      ],
+      presetController,
+    );
+  }
+
   ///
   /// Polka Dots Curtain shader
   factory ShaderPreset.polkaDotsCurtain(
