@@ -39,11 +39,11 @@ class Uniforms {
 ///
 class ShaderPresetController {
   void Function(dynamic uniforms)? _setUniforms;
-  ShaderBuffersController Function()? _getShaderController;
+  ShaderController Function()? _getShaderController;
 
   void _setController(
     void Function(dynamic uniforms) setUniforms,
-    ShaderBuffersController Function() getShaderController,
+    ShaderController Function() getShaderController,
   ) {
     _setUniforms = setUniforms;
     _getShaderController = getShaderController;
@@ -51,8 +51,7 @@ class ShaderPresetController {
 
   void setUniforms(dynamic uniforms) => _setUniforms?.call(uniforms);
 
-  ShaderBuffersController? getShaderController() =>
-      _getShaderController?.call();
+  ShaderController? getShaderController() => _getShaderController?.call();
 
   /// Get the preset uniforms
   Uniforms getUniforms(ShaderPresetsEnum preset) {
@@ -147,7 +146,7 @@ class ShaderPreset extends StatelessWidget {
     super.key,
   });
 
-  ShaderBuffersController _getShaderController() {
+  ShaderController _getShaderController() {
     return shaderController;
   }
 
@@ -229,12 +228,9 @@ class ShaderPreset extends StatelessWidget {
     List<dynamic> childs,
     List<(String name, double value)> uValues,
     ShaderPresetController? presetController, {
-    void Function(ShaderBuffersController controller, Offset position)?
-        onPointerDown,
-    void Function(ShaderBuffersController controller, Offset position)?
-        onPointerMove,
-    void Function(ShaderBuffersController controller, Offset position)?
-        onPointerUp,
+    void Function(ShaderController controller, Offset position)? onPointerDown,
+    void Function(ShaderController controller, Offset position)? onPointerMove,
+    void Function(ShaderController controller, Offset position)? onPointerUp,
   }) {
     /// Check [childs]
     var a = true;
@@ -268,7 +264,7 @@ class ShaderPreset extends StatelessWidget {
 
     return ShaderPreset._(
       key: key,
-      shaderController: ShaderBuffersController(),
+      shaderController: ShaderController(),
       presetController: presetController,
       onPointerDown: onPointerDown,
       onPointerMove: onPointerMove,
@@ -279,6 +275,10 @@ class ShaderPreset extends StatelessWidget {
       ..mainImage = main;
   }
 
+  ////////////////////////////////////////
+  /// ShaderToy shaders
+  ////////////////////////////////////////
+  ///
   /// Water shader
   factory ShaderPreset.water(
     dynamic child, {
@@ -320,37 +320,43 @@ class ShaderPreset extends StatelessWidget {
       ],
       presetController,
       onPointerDown: (ctrl, position) {
+        /// set `play` state when touching
         ctrl.play();
       },
       onPointerUp: (ctrl, position) {
+        /// when release the pointer, pause again and rewind
         ctrl
           ..pause()
           ..rewind();
       },
     );
 
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      ret.shaderController.addConditionalOperation(
-        (
-          layerBuffer: ret.mainImage,
-          param: Param.iMouseXNormalized,
-          checkType: CheckOperator.minor,
-          checkValue: 0.1,
-          operation: (result) {
-            if (result) {
-              ret.mainImage.swapChannels(0, 1);
-              ret.shaderController
-                ..pause()
-                ..rewind();
-            }
-          },
-        ),
-      );
-    });
+    /// Add a trigger for the X touch position.
+    /// When moving near the left side, we can swap children
+    ret.shaderController.addConditionalOperation(
+      (
+        layerBuffer: ret.mainImage,
+        param: Param.iMouseXNormalized,
+        checkType: CheckOperator.minor,
+        checkValue: 0.1,
+        operation: (result) {
+          if (result) {
+            ret.mainImage.swapChannels(0, 1);
+            ret.shaderController
+              ..pause()
+              ..rewind();
+          }
+        },
+      ),
+    );
 
     return ret;
   }
 
+  ////////////////////////////////////////
+  /// GL Transitions shaders
+  ////////////////////////////////////////
+  ///
   /// Polka Dots Curtain shader
   factory ShaderPreset.polkaDotsCurtain(
     dynamic child1,
@@ -399,15 +405,14 @@ class ShaderPreset extends StatelessWidget {
     );
   }
 
-
   final bool startPaused;
   final List<LayerBuffer>? buffers;
-  final ShaderBuffersController shaderController;
-  final void Function(ShaderBuffersController controller, Offset position)?
+  final ShaderController shaderController;
+  final void Function(ShaderController controller, Offset position)?
       onPointerDown;
-  final void Function(ShaderBuffersController controller, Offset position)?
+  final void Function(ShaderController controller, Offset position)?
       onPointerMove;
-  final void Function(ShaderBuffersController controller, Offset position)?
+  final void Function(ShaderController controller, Offset position)?
       onPointerUp;
   final ShaderPresetController? presetController;
 
