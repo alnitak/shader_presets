@@ -33,7 +33,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   ValueNotifier<List<double>> floatUniforms = ValueNotifier([]);
   ValueNotifier<ShaderPresetsEnum> preset =
-      ValueNotifier(ShaderPresetsEnum.water);
+      ValueNotifier(ShaderPresetsEnum.pageCurl);
   final presetController = ShaderPresetController();
 
   @override
@@ -51,12 +51,13 @@ class _MyHomePageState extends State<MyHomePage> {
             return Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Container(
-                  color: Colors.yellow,
+                Expanded(
+                  // color: Colors.yellow,
                   // width: 600,
-                  height: 700,
+                  // height: 700,
                   child: createPreset(p),
                 ),
+                const SizedBox(height: 16),
                 Wrap(
                   children: List.generate(
                     ShaderPresetsEnum.values.length,
@@ -86,16 +87,32 @@ class _MyHomePageState extends State<MyHomePage> {
         ret = ShaderPreset.water(
           // const Widget1(),
           // const Widget2(),
-          // 'assets/dash.png',
           'assets/flutter.png',
+          // 'assets/dash.png',
+          presetController: presetController,
+        );
+      case ShaderPresetsEnum.pageCurl:
+        ret = ShaderPreset.pageCurl(
+          // const Widget1(),
+          // const Widget2(),
+          'assets/flutter.png',
+          'assets/dash.png',
           presetController: presetController,
         );
       case ShaderPresetsEnum.polkaDotsCurtain:
         ret = ShaderPreset.polkaDotsCurtain(
           // const Widget1(),
           // const Widget2(),
-          'assets/dash.png',
           'assets/flutter.png',
+          'assets/dash.png',
+          presetController: presetController,
+        );
+      case ShaderPresetsEnum.radial:
+        ret = ShaderPreset.radial(
+          // const Widget1(),
+          // const Widget2(),
+          'assets/flutter.png',
+          'assets/dash.png',
           presetController: presetController,
         );
     }
@@ -126,7 +143,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 direction: Axis.horizontal,
                 children: [
                   Text('${uniforms.uniforms[index].name} \t\t'
-                      '${uniform[index].toStringAsFixed(1)}'),
+                      '${uniform[index].toStringAsFixed(2)}'),
                   Expanded(
                     child: Slider(
                       value: uniform[index],

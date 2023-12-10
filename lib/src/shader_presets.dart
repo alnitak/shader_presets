@@ -4,7 +4,9 @@ import 'package:shader_buffers/shader_buffers.dart';
 
 enum ShaderPresetsEnum {
   water,
+  pageCurl,
   polkaDotsCurtain,
+  radial,
 }
 
 class Uniform {
@@ -37,14 +39,20 @@ class Uniforms {
 ///
 class ShaderPresetController {
   void Function(dynamic uniforms)? _setUniforms;
+  ShaderBuffersController Function()? _getShaderController;
 
   void _setController(
     void Function(dynamic uniforms) setUniforms,
+    ShaderBuffersController Function() getShaderController,
   ) {
     _setUniforms = setUniforms;
+    _getShaderController = getShaderController;
   }
 
   void setUniforms(dynamic uniforms) => _setUniforms?.call(uniforms);
+
+  ShaderBuffersController? getShaderController() =>
+      _getShaderController?.call();
 
   /// Get the preset uniforms
   Uniforms getUniforms(ShaderPresetsEnum preset) {
@@ -69,6 +77,15 @@ class ShaderPresetController {
             defaultValue: 1,
             value: 1,
           ), //
+        ]);
+      case ShaderPresetsEnum.pageCurl:
+        return Uniforms([
+          Uniform(
+            name: 'radius',
+            range: const RangeValues(0, 1),
+            defaultValue: 0.1,
+            value: 0.1,
+          ),
         ]);
       case ShaderPresetsEnum.polkaDotsCurtain:
         return Uniforms([
@@ -97,6 +114,21 @@ class ShaderPresetController {
             value: 0.5,
           ),
         ]);
+      case ShaderPresetsEnum.radial:
+        return Uniforms([
+          Uniform(
+            name: 'progress',
+            range: const RangeValues(0, 1),
+            defaultValue: 0,
+            value: 0,
+          ),
+          Uniform(
+            name: 'smoothness',
+            range: const RangeValues(0, 3),
+            defaultValue: 1,
+            value: 1,
+          ),
+        ]);
     }
   }
 }
@@ -105,8 +137,7 @@ class ShaderPresetController {
 /// the same size otherwise some of them will be stretched
 class ShaderPreset extends StatelessWidget {
   ShaderPreset._({
-    required this.mainImage,
-    required this.controller,
+    required this.shaderController,
     this.presetController,
     this.buffers,
     this.startPaused = false,
@@ -115,6 +146,10 @@ class ShaderPreset extends StatelessWidget {
     this.onPointerUp,
     super.key,
   });
+
+  ShaderBuffersController _getShaderController() {
+    return shaderController;
+  }
 
   /// Sets the uniform values for the current preset.
   /// Accepts a [Uniforms] or [List<double>] param.
@@ -143,6 +178,24 @@ class ShaderPreset extends StatelessWidget {
           newUniforms = uniforms;
         }
 
+      case ShaderPresetsEnum.pageCurl:
+        assert(
+          uniforms is List<Object> && uniforms.length == 1,
+          'Water preset only accepts 1 uniforms!',
+        );
+        if (uniforms is Uniforms) {
+          newUniforms = List.generate(
+            uniforms.uniforms.length,
+            (index) => uniforms.uniforms[index].value,
+          );
+        }
+        if (uniforms is List<double>) {
+          for (var i = 0; i < uniforms.length; i++) {
+            this.uniforms.uniforms[i].value = uniforms[i];
+          }
+          newUniforms = uniforms;
+        }
+
       case ShaderPresetsEnum.polkaDotsCurtain:
         assert(
           uniforms is List<double> && uniforms.length == 4,
@@ -153,8 +206,149 @@ class ShaderPreset extends StatelessWidget {
               (index) => uniforms.uniforms[index].value);
         }
         if (uniforms is List<double>) newUniforms = uniforms;
+
+      case ShaderPresetsEnum.radial:
+        assert(
+          uniforms is List<double> && uniforms.length == 2,
+          'Radial preset only accepts 2 uniforms!',
+        );
+        if (uniforms is Uniforms) {
+          newUniforms = List.generate(uniforms.uniforms.length,
+              (index) => uniforms.uniforms[index].value);
+        }
+        if (uniforms is List<double>) newUniforms = uniforms;
     }
     mainImage.floatUniforms = newUniforms;
+  }
+
+  /// Common factory to rule them all
+  factory ShaderPreset._common(
+    Key? key,
+    String frag,
+    ShaderPresetsEnum presetType,
+    List<dynamic> childs,
+    List<(String name, double value)> uValues,
+    ShaderPresetController? presetController, {
+    void Function(ShaderBuffersController controller, Offset position)?
+        onPointerDown,
+    void Function(ShaderBuffersController controller, Offset position)?
+        onPointerMove,
+    void Function(ShaderBuffersController controller, Offset position)?
+        onPointerUp,
+  }) {
+    /// Check [childs]
+    var a = true;
+    for (final child in childs) {
+      a |= child is Widget || child is String;
+    }
+    assert(a, "Child(s) can be of type Widget or String('assets/path') only");
+
+    /// create layer
+    final main = LayerBuffer(
+      shaderAssetsName: frag,
+      floatUniforms:
+          List.generate(uValues.length, (index) => uValues[index].$2),
+    )..setChannels(
+        List.generate(
+          childs.length,
+          (index) => IChannel(
+            child: childs[index] is Widget ? childs[index] as Widget : null,
+            assetsTexturePath:
+                childs[index] is String ? childs[index] as String : null,
+          ),
+        ),
+      );
+
+    /// Set user uniforms
+    final controller = presetController ?? ShaderPresetController();
+    final u = controller.getUniforms(presetType);
+    for (final uniform in uValues) {
+      u.setValue(uniform.$1, uniform.$2);
+    }
+
+    return ShaderPreset._(
+      key: key,
+      shaderController: ShaderBuffersController(),
+      presetController: presetController,
+      onPointerDown: onPointerDown,
+      onPointerMove: onPointerMove,
+      onPointerUp: onPointerUp,
+    )
+      ..preset = presetType
+      ..uniforms = u
+      ..mainImage = main;
+  }
+
+  /// Water shader
+  factory ShaderPreset.water(
+    dynamic child, {
+    Key? key,
+    ShaderPresetController? presetController,
+    double speed = 0.2,
+    double frequency = 8,
+    double amplitude = 1,
+  }) {
+    return ShaderPreset._common(
+      key,
+      'packages/shader_presets/assets/shaders/water.frag',
+      ShaderPresetsEnum.water,
+      [child],
+      [
+        ('speed', speed),
+        ('frequency', frequency),
+        ('amplitude', amplitude),
+      ],
+      presetController,
+    );
+  }
+
+  /// Page Curl shader
+  factory ShaderPreset.pageCurl(
+    dynamic child1,
+    dynamic child2, {
+    Key? key,
+    ShaderPresetController? presetController,
+    double radius = 0.1,
+  }) {
+    final ret = ShaderPreset._common(
+      key,
+      'packages/shader_presets/assets/shaders/page_curl.frag',
+      ShaderPresetsEnum.pageCurl,
+      [child1, child2],
+      [
+        ('radius', radius),
+      ],
+      presetController,
+      onPointerDown: (ctrl, position) {
+        ctrl.play();
+      },
+      onPointerUp: (ctrl, position) {
+        ctrl
+          ..pause()
+          ..rewind();
+      },
+    );
+
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      ret.shaderController.addConditionalOperation(
+        (
+          layerBuffer: ret.mainImage,
+          param: Param.iMouseXNormalized,
+          checkType: CheckOperator.minor,
+          checkValue: 0.1,
+          operation: (result) {
+            if (result) {
+              ret.mainImage.swapChannels(0, 1);
+              ret.shaderController
+                ..pause()
+                ..rewind();
+            }
+          },
+        ),
+      );
+    });
+
+    return ret;
   }
 
   /// Polka Dots Curtain shader
@@ -168,176 +362,72 @@ class ShaderPreset extends StatelessWidget {
     double centerX = 0.5,
     double centerY = 0.5,
   }) {
-    assert(
-      child1 is Widget ||
-          child1 is String ||
-          child2 is Widget ||
-          child2 is String,
-      "Childs can be of type Widget or String('assets/texture/path') only.",
+    return ShaderPreset._common(
+      key,
+      'packages/shader_presets/assets/shaders/gl_transitions/polka_dots_curtain.frag',
+      ShaderPresetsEnum.polkaDotsCurtain,
+      [child1, child2],
+      [
+        ('progress', progress),
+        ('dots', dots),
+        ('centerX', centerX),
+        ('centerY', centerY),
+      ],
+      presetController,
     );
-
-    final main = LayerBuffer(
-      shaderAssetsName:
-          'packages/shader_presets/assets/shaders/gl_transitions/polka_dots_curtain.frag',
-      floatUniforms: [progress, dots, centerX, centerY],
-    )..setChannels([
-        IChannel(
-          child: child1 is Widget ? child1 : null,
-          assetsTexturePath: child1 is String ? child1 : null,
-        ),
-        IChannel(
-          child: child2 is Widget ? child2 : null,
-          assetsTexturePath: child2 is String ? child2 : null,
-        ),
-      ]);
-
-    presetController ??= ShaderPresetController();
-    final uniforms =
-        presetController.getUniforms(ShaderPresetsEnum.polkaDotsCurtain)
-          ..setValue('progress', progress)
-          ..setValue('dots', dots)
-          ..setValue('centerX', centerX)
-          ..setValue('centerY', centerY);
-
-    return ShaderPreset._(
-      key: key,
-      mainImage: main,
-      controller: ShaderBuffersController(),
-      presetController: presetController,
-    )
-      ..preset = ShaderPresetsEnum.polkaDotsCurtain
-      ..uniforms = uniforms;
   }
 
-  /// Water shader
-  factory ShaderPreset.water(
-    dynamic child, {
+  /// Radial shader
+  factory ShaderPreset.radial(
+    dynamic child1,
+    dynamic child2, {
     Key? key,
     ShaderPresetController? presetController,
-    double speed = 0.2,
-    double frequency = 8,
-    double amplitude = 1,
+    double progress = 0,
+    double smoothness = 1,
   }) {
-    assert(
-      child is Widget || child is String,
-      "Child can be of type Widget or String('assets/texture/path') only",
+    return ShaderPreset._common(
+      key,
+      'packages/shader_presets/assets/shaders/gl_transitions/radial.frag',
+      ShaderPresetsEnum.radial,
+      [child1, child2],
+      [
+        ('progress', progress),
+        ('smoothness', smoothness),
+      ],
+      presetController,
     );
-
-    final main = LayerBuffer(
-      shaderAssetsName: 'packages/shader_presets/assets/shaders/water.frag',
-      floatUniforms: [speed, frequency, amplitude],
-    )..setChannels([
-        IChannel(
-          child: child is Widget ? child : null,
-          assetsTexturePath: child is String ? child : null,
-        ),
-      ]);
-
-    presetController ??= ShaderPresetController();
-    final uniforms = presetController.getUniforms(ShaderPresetsEnum.water)
-      ..setValue('speed', speed)
-      ..setValue('frequency', frequency)
-      ..setValue('amplitude', amplitude);
-
-    return ShaderPreset._(
-      key: key,
-      mainImage: main,
-      controller: ShaderBuffersController(),
-      presetController: presetController,
-    )
-      ..preset = ShaderPresetsEnum.water
-      ..uniforms = uniforms;
   }
 
-  /// Page curl.
-  /// [radius] radius of the curl.
-  // factory ShaderPreset.pageCurl(
-  //   dynamic child1,
-  //   dynamic child2, {
-  //   Key? key,
-  //   double radius = 0.1,
-  // }) {
-  //   assert(
-  //     child1 is Widget ||
-  //         child1 is String ||
-  //         child2 is Widget ||
-  //         child2 is String,
-  //     'childs can be of type Widget or String only',
-  //   );
-  //   final main = LayerBuffer(
-  //     shaderAssetsName: 'packages/shader_presets/assets/shaders/page_curl.frag',
-  //     floatUniforms: [radius],
-  //   )..setChannels([
-  //       IChannel(
-  //         child: child2 is Widget ? child2 : null,
-  //         assetsTexturePath: child2 is String ? child2 : null,
-  //       ),
-  //       IChannel(
-  //         child: child1 is Widget ? child1 : null,
-  //         assetsTexturePath: child1 is String ? child1 : null,
-  //       ),
-  //     ]);
-  //   final ctrl = ShaderBuffersController();
-  //
-  //   /// swap children when moving to the leff edge
-  //   ctrl.addConditionalOperation(
-  //     (
-  //       layerBuffer: main,
-  //       param: Param.iMouseXNormalized,
-  //       checkType: CheckOperator.minor,
-  //       checkValue: 0.1,
-  //       operation: (result) {
-  //         if (result) {
-  //           main.swapChannels(0, 1);
-  //           ctrl
-  //             ..pause()
-  //             ..rewind();
-  //         }
-  //       },
-  //     ),
-  //   );
-  //
-  //   return ShaderPreset._(
-  //     key: key,
-  //     startPaused: true,
-  //     mainImage: main,
-  //     controller: ctrl,
-  //     onPointerDown: (position) {
-  //       ctrl.play();
-  //     },
-  //     onPointerUp: (position) {
-  //       ctrl
-  //         ..pause()
-  //         ..rewind();
-  //     },
-  //   )
-  //   ..usingPrest = ShaderPresetsEnum.pageCurl;
-  // }
 
   final bool startPaused;
-  final LayerBuffer mainImage;
   final List<LayerBuffer>? buffers;
-  final ShaderBuffersController? controller;
-  final void Function(Offset position)? onPointerDown;
-  final void Function(Offset position)? onPointerMove;
-  final void Function(Offset position)? onPointerUp;
+  final ShaderBuffersController shaderController;
+  final void Function(ShaderBuffersController controller, Offset position)?
+      onPointerDown;
+  final void Function(ShaderBuffersController controller, Offset position)?
+      onPointerMove;
+  final void Function(ShaderBuffersController controller, Offset position)?
+      onPointerUp;
   final ShaderPresetController? presetController;
 
+  late LayerBuffer mainImage;
   late ShaderPresetsEnum preset;
   late Uniforms uniforms;
 
   @override
   Widget build(BuildContext context) {
-    presetController!._setController(_setUniforms);
+    presetController!._setController(_setUniforms, _getShaderController);
 
     return ShaderBuffers(
-      controller: controller,
+      key: UniqueKey(),
+      controller: shaderController,
       mainImage: mainImage,
       buffers: buffers,
       startPaused: startPaused,
-      onPointerDown: onPointerDown,
-      onPointerMove: onPointerMove,
-      onPointerUp: onPointerUp,
+      onPointerDownNormalized: onPointerDown,
+      onPointerMoveNormalized: onPointerMove,
+      onPointerUpNormalized: onPointerUp,
     );
   }
 }
