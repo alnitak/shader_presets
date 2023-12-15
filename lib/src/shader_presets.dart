@@ -2,6 +2,17 @@
 import 'package:flutter/material.dart';
 import 'package:shader_buffers/shader_buffers.dart';
 
+/// How to add a preset:
+/// - add a [ShaderPresetsEnum] enum value
+/// - add that enum in [ShaderPresetController.getUniforms()] method. If
+///   the new shader doesn't have additional float uniforms, then
+///   return an empty list
+/// - add a factory in [ShaderPreset]
+/// 
+/// The `dynamic child` represents the texture (the `uniform sampler2D) used
+/// by the shader. The `dynamic` must be the asset image path or a Widget.
+/// You can add as many childrens as you wish.
+
 enum ShaderPresetsEnum {
   water,
   pageCurl,
@@ -99,7 +110,7 @@ class ShaderPresetController {
           ),
           Uniform(
             name: 'persp',
-            range: const RangeValues(0, 10),
+            range: const RangeValues(0, 2),
             defaultValue: 0.7,
             value: 0.7,
           ),
@@ -111,13 +122,13 @@ class ShaderPresetController {
           ),
           Uniform(
             name: 'reflection',
-            range: const RangeValues(0, 10),
+            range: const RangeValues(0, 1),
             defaultValue: 0.4,
             value: 0.4,
           ),
           Uniform(
             name: 'floating',
-            range: const RangeValues(0, 10),
+            range: const RangeValues(0, 30),
             defaultValue: 3,
             value: 3,
           ),
@@ -210,14 +221,14 @@ class ShaderPreset extends StatelessWidget {
     mainImage.floatUniforms = newUniformsList;
   }
 
-  /// Common factory to rule them all
-  factory ShaderPreset._common(
+  /// Common factory to rule them all!
+  factory ShaderPreset._common({
+    required String frag,
+    required ShaderPresetsEnum presetType,
+    required List<dynamic> childs,
     Key? key,
-    String frag,
-    ShaderPresetsEnum presetType,
-    List<dynamic> childs,
-    List<(String name, double value)> uValues,
-    ShaderPresetController? presetController, {
+    List<(String name, double value)> uValues = const [],
+    ShaderPresetController? presetController, 
     void Function(ShaderController controller, Offset position)? onPointerDown,
     void Function(ShaderController controller, Offset position)? onPointerMove,
     void Function(ShaderController controller, Offset position)? onPointerUp,
@@ -279,20 +290,21 @@ class ShaderPreset extends StatelessWidget {
     double amplitude = 1,
   }) {
     return ShaderPreset._common(
-      key,
-      'packages/shader_presets/assets/shaders/water.frag',
-      ShaderPresetsEnum.water,
-      [child],
-      [
+      key: key,
+      frag: 'packages/shader_presets/assets/shaders/water.frag',
+      presetType: ShaderPresetsEnum.water,
+      childs: [child],
+      uValues: [
         ('speed', speed),
         ('frequency', frequency),
         ('amplitude', amplitude),
       ],
-      presetController,
+      presetController: presetController,
     );
   }
 
-  /// Page Curl shader
+  /// Page Curl shader which curls on both X and Y axis
+  /// It swaps children when it reach 10% of width from the left edge
   factory ShaderPreset.pageCurl(
     dynamic child1,
     dynamic child2, {
@@ -301,14 +313,12 @@ class ShaderPreset extends StatelessWidget {
     double radius = 0.1,
   }) {
     final ret = ShaderPreset._common(
-      key,
-      'packages/shader_presets/assets/shaders/page_curl.frag',
-      ShaderPresetsEnum.pageCurl,
-      [child1, child2],
-      [
-        ('radius', radius),
-      ],
-      presetController,
+      key: key,
+      frag: 'packages/shader_presets/assets/shaders/page_curl.frag',
+      presetType: ShaderPresetsEnum.pageCurl,
+      childs: [child1, child2],
+      uValues: [('radius', radius)],
+      presetController: presetController,
       onPointerDown: (ctrl, position) {
         /// set `play` state when touching
         ctrl.play();
@@ -360,18 +370,18 @@ class ShaderPreset extends StatelessWidget {
     double floating = 3,
   }) {
     return ShaderPreset._common(
-      key,
-      'packages/shader_presets/assets/shaders/gl_transitions/cube.frag',
-      ShaderPresetsEnum.cube,
-      [child1, child2],
-      [
+      key: key,
+      frag: 'packages/shader_presets/assets/shaders/gl_transitions/cube.frag',
+      presetType: ShaderPresetsEnum.cube,
+      childs: [child1, child2],
+      uValues: [
         ('progress', progress),
         ('persp', persp),
         ('unzoom', unzoom),
         ('reflection', reflection),
         ('floating', floating),
       ],
-      presetController,
+      presetController: presetController,
     );
   }
 
@@ -388,17 +398,17 @@ class ShaderPreset extends StatelessWidget {
     double centerY = 0.5,
   }) {
     return ShaderPreset._common(
-      key,
-      'packages/shader_presets/assets/shaders/gl_transitions/polka_dots_curtain.frag',
-      ShaderPresetsEnum.polkaDotsCurtain,
-      [child1, child2],
-      [
+      key: key,
+      frag: 'packages/shader_presets/assets/shaders/gl_transitions/polka_dots_curtain.frag',
+      presetType: ShaderPresetsEnum.polkaDotsCurtain,
+      childs: [child1, child2],
+      uValues: [
         ('progress', progress),
         ('dots', dots),
         ('centerX', centerX),
         ('centerY', centerY),
       ],
-      presetController,
+      presetController: presetController,
     );
   }
 
@@ -412,15 +422,15 @@ class ShaderPreset extends StatelessWidget {
     double smoothness = 1,
   }) {
     return ShaderPreset._common(
-      key,
-      'packages/shader_presets/assets/shaders/gl_transitions/radial.frag',
-      ShaderPresetsEnum.radial,
-      [child1, child2],
-      [
+      key: key,
+      frag: 'packages/shader_presets/assets/shaders/gl_transitions/radial.frag',
+      presetType: ShaderPresetsEnum.radial,
+      childs: [child1, child2],
+      uValues: [
         ('progress', progress),
         ('smoothness', smoothness),
       ],
-      presetController,
+      presetController: presetController,
     );
   }
 
@@ -444,7 +454,6 @@ class ShaderPreset extends StatelessWidget {
     presetController!._setController(_setUniforms, _getShaderController);
 
     return ShaderBuffers(
-      key: UniqueKey(),
       controller: shaderController,
       mainImage: mainImage,
       buffers: buffers,
