@@ -33,7 +33,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   ValueNotifier<List<double>> floatUniforms = ValueNotifier([]);
   ValueNotifier<ShaderPresetsEnum> preset =
-      ValueNotifier(ShaderPresetsEnum.pageCurl);
+      ValueNotifier(ShaderPresetsEnum.water);
   final presetController = ShaderPresetController();
 
   @override
@@ -52,7 +52,6 @@ class _MyHomePageState extends State<MyHomePage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Expanded(
-                  // color: Colors.yellow,
                   // width: 600,
                   // height: 700,
                   child: createPreset(p),
@@ -84,43 +83,38 @@ class _MyHomePageState extends State<MyHomePage> {
     Widget ret = const SizedBox.shrink();
     switch (p) {
       case ShaderPresetsEnum.water:
-        ret = ShaderPreset.water(
-          // const Widget1(),
-          // const Widget2(),
-          'assets/flutter.png',
-          // 'assets/dash.png',
+        ret = ShaderPresetWater(
+          child: 'assets/flutter.png',
           presetController: presetController,
         );
       case ShaderPresetsEnum.pageCurl:
-        ret = ShaderPreset.pageCurl(
-          // const Widget1(),
-          // const Widget2(),
-          'assets/flutter.png',
-          'assets/dash.png',
+        ret = ShaderPresetPageCurl(
+          child1: 'assets/flutter.png',
+          child2: 'assets/dash.png',
           presetController: presetController,
         );
       case ShaderPresetsEnum.cube:
-        ret = ShaderPreset.cube(
-          // const Widget1(),
-          // const Widget2(),
-          'assets/flutter.png',
-          'assets/dash.png',
+        ret = ShaderPresetCube(
+          child1: 'assets/flutter.png',
+          child2: 'assets/dash.png',
           presetController: presetController,
         );
       case ShaderPresetsEnum.polkaDotsCurtain:
-        ret = ShaderPreset.polkaDotsCurtain(
-          // const Widget1(),
-          // const Widget2(),
-          'assets/flutter.png',
-          'assets/dash.png',
+        ret = ShaderPresetPolkaDotsCurtain(
+          child1: 'assets/flutter.png',
+          child2: 'assets/dash.png',
           presetController: presetController,
         );
       case ShaderPresetsEnum.radial:
-        ret = ShaderPreset.radial(
-          // const Widget1(),
-          // const Widget2(),
-          'assets/flutter.png',
-          'assets/dash.png',
+        ret = ShaderPresetRadial(
+          child1: 'assets/flutter.png',
+          child2: 'assets/dash.png',
+          presetController: presetController,
+        );
+      case ShaderPresetsEnum.flyeye:
+        ret = ShaderPresetFlyeye(
+          child1: 'assets/flutter.png',
+          child2: 'assets/dash.png',
           presetController: presetController,
         );
     }

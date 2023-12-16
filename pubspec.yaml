@@ -23,8 +23,9 @@ dev_dependencies:
 flutter:
 
   shaders:
-    - assets/shaders/water.frag
-    - assets/shaders/page_curl.frag
+    - assets/shaders/shadertoy/water.frag
+    - assets/shaders/shadertoy/page_curl.frag
     - assets/shaders/gl_transitions/cube.frag
     - assets/shaders/gl_transitions/polka_dots_curtain.frag
     - assets/shaders/gl_transitions/radial.frag
+    - assets/shaders/gl_transitions/flyeye.frag

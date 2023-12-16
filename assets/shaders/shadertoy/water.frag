@@ -1,4 +1,4 @@
-#include "common/common_header.frag"
+#include "../common/common_header.frag"
 
 uniform sampler2D iChannel0;
 
@@ -12,6 +12,7 @@ uniform float amplitude; // 1.0
 // https://www.shadertoy.com/view/Mls3DH
 
 
+// ------ START SHADERTOY CODE -----
 // [2TC 15] Water2D
 // Copyleft {c} 2015 Michael Pohoreski
 // Chars: 260
@@ -64,7 +65,8 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ) {
     fragColor = texture( iChannel0, s );
 }
 #endif 
+// ------ END SHADERTOY CODE -----
 
 
 
-#include "common/main_shadertoy.frag"
+#include "../common/main_shadertoy.frag"
