@@ -1,6 +1,10 @@
 // ignore_for_file: public_member_api_docs
 
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
+import 'package:shader_preset_example/page1.dart';
+import 'package:shader_preset_example/page2.dart';
 import 'package:shader_presets/shader_presets.dart';
 
 void main() {
@@ -14,9 +18,19 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Shader Preset demo',
+      themeMode: ThemeMode.dark,
+      darkTheme: ThemeData.dark(),
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
+      ),
+      scrollBehavior: const MaterialScrollBehavior().copyWith(
+        dragDevices: {
+          PointerDeviceKind.mouse,
+          PointerDeviceKind.touch,
+          PointerDeviceKind.stylus,
+          PointerDeviceKind.unknown,
+        },
       ),
       home: const MyHomePage(),
     );
@@ -31,9 +45,10 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  bool useImages = true;
   ValueNotifier<List<double>> floatUniforms = ValueNotifier([]);
   ValueNotifier<ShaderPresetsEnum> preset =
-      ValueNotifier(ShaderPresetsEnum.water);
+      ValueNotifier(ShaderPresetsEnum.raymarchedAurora);
   final presetController = ShaderPresetController();
 
   @override
@@ -57,6 +72,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: createPreset(p),
                 ),
                 const SizedBox(height: 16),
+                const Divider(),
                 Wrap(
                   children: List.generate(
                     ShaderPresetsEnum.values.length,
@@ -71,6 +87,35 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                 ),
                 uniformSliders(),
+                Row(
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        if (!useImages) {
+                          if (context.mounted) {
+                            setState(() {
+                              useImages = true;
+                            });
+                          }
+                        }
+                      },
+                      child: const Text('use images'),
+                    ),
+                    const SizedBox(width: 16),
+                    ElevatedButton(
+                      onPressed: () {
+                        if (useImages) {
+                          if (context.mounted) {
+                            setState(() {
+                              useImages = false;
+                            });
+                          }
+                        }
+                      },
+                      child: const Text('use widgets'),
+                    ),
+                  ],
+                ),
               ],
             );
           },
@@ -81,40 +126,47 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Widget createPreset(ShaderPresetsEnum p) {
     Widget ret = const SizedBox.shrink();
+    final dynamic child1 = useImages ? 'assets/flutter.png' : const Page1();
+    final dynamic child2 = useImages ? 'assets/dash.png' : const Page2();
     switch (p) {
       case ShaderPresetsEnum.water:
         ret = ShaderPresetWater(
-          child: 'assets/flutter.png',
+          child: child1,
           presetController: presetController,
         );
       case ShaderPresetsEnum.pageCurl:
         ret = ShaderPresetPageCurl(
-          child1: 'assets/flutter.png',
-          child2: 'assets/dash.png',
+          child1: child1,
+          child2: child2,
           presetController: presetController,
         );
+      case ShaderPresetsEnum.raymarchedAurora:
+        ret = ShaderPresetRaymarchedAurora(
+          presetController: presetController,
+        );
+
       case ShaderPresetsEnum.cube:
         ret = ShaderPresetCube(
-          child1: 'assets/flutter.png',
-          child2: 'assets/dash.png',
+          child1: child1,
+          child2: child2,
           presetController: presetController,
         );
       case ShaderPresetsEnum.polkaDotsCurtain:
         ret = ShaderPresetPolkaDotsCurtain(
-          child1: 'assets/flutter.png',
-          child2: 'assets/dash.png',
+          child1: child1,
+          child2: child2,
           presetController: presetController,
         );
       case ShaderPresetsEnum.radial:
         ret = ShaderPresetRadial(
-          child1: 'assets/flutter.png',
-          child2: 'assets/dash.png',
+          child1: child1,
+          child2: child2,
           presetController: presetController,
         );
       case ShaderPresetsEnum.flyeye:
         ret = ShaderPresetFlyeye(
-          child1: 'assets/flutter.png',
-          child2: 'assets/dash.png',
+          child1: child1,
+          child2: child2,
           presetController: presetController,
         );
     }
@@ -123,7 +175,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Widget uniformSliders() {
     /// Get the preset min-max ranges and set its uniform to the starting range
-    final uniforms = presetController.getUniforms(preset.value);
+    final uniforms = presetController.getDefaultUniforms(preset.value);
 
     /// Build the uniforms list
     floatUniforms = ValueNotifier(
@@ -164,87 +216,6 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         );
       },
-    );
-  }
-}
-
-class Widget1 extends StatelessWidget {
-  const Widget1({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      color: Colors.green[100],
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Icon(Icons.account_circle, size: 42),
-            const SizedBox(width: 16),
-            const Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  'Widget 1',
-                  style: TextStyle(fontWeight: FontWeight.w900),
-                ),
-                Text('shader_preset'),
-              ],
-            ),
-            const Spacer(),
-            ElevatedButton(
-              onPressed: () {
-                print('Widget 1');
-              },
-              child: const Text('Widget 1'),
-            ),
-            const Icon(Icons.add_box_rounded, size: 42),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class Widget2 extends StatelessWidget {
-  const Widget2({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      color: Colors.yellow[100],
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Icon(Icons.ac_unit, color: Colors.red, size: 42),
-            const SizedBox(width: 16),
-            const Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  'Widget 2',
-                  style: TextStyle(fontWeight: FontWeight.w900),
-                ),
-                Text('shader_preset'),
-              ],
-            ),
-            const Spacer(),
-            ElevatedButton(
-              onPressed: () {
-                print('Widget 2');
-              },
-              child: const Text('Widget 2'),
-            ),
-            const Spacer(),
-            const Icon(Icons.delete_forever, color: Colors.red, size: 42),
-          ],
-        ),
-      ),
     );
   }
 }

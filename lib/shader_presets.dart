@@ -8,6 +8,7 @@ export 'src/shader_presets.dart';
 // Shadertoy fragment shaders
 export 'src/shadertoy/page_curl.dart';
 export 'src/shadertoy/water.dart';
+export 'src/shadertoy/raymarched_aurora.dart';
 
 // GL Transitions fragment shaders
 export 'src/gl_transitions/cube.dart';

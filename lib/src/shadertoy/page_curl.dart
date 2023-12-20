@@ -36,14 +36,10 @@ class ShaderPresetPageCurl extends StatelessWidget {
       childs: [child1, child2],
       uValues: [('radius', radius)],
       presetController: presetController,
-      onPointerDown: (ctrl, position) {
-        /// set `play` state when touching
-        ctrl.play();
-      },
       onPointerUp: (ctrl, position) {
-        /// when release the pointer, pause again and rewind
+        /// rewind when releasing the pointer
         ctrl
-          ..pause()
+          ..play()
           ..rewind();
       },
     );
@@ -56,11 +52,11 @@ class ShaderPresetPageCurl extends StatelessWidget {
         param: Param.iMouseXNormalized,
         checkType: CheckOperator.minor,
         checkValue: 0.1,
-        operation: (result) {
+        operation: (ctrl, result) {
           if (result) {
-            ret.mainImage.swapChannels(0, 1);
             ret.shaderController
               ..pause()
+              ..swapChannels(ret.mainImage, 0, 1)
               ..rewind();
           }
         },

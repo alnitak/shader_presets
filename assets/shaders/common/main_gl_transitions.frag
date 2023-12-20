@@ -6,6 +6,7 @@ void main() {
     // With the following line, the compiler will not remove unusued
     float tmp = (iFrame/iFrame) * (iMouse.x/iMouse.x) * 
         (iTime/iTime) * (iResolution.x/iResolution.x);
+    if (tmp != 1.) tmp = 1.;
 
     ratio = iResolution.x/iResolution.y;
     vec2 uv = FlutterFragCoord().xy / iResolution.xy * tmp;

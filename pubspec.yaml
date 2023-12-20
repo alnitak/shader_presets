@@ -1,6 +1,6 @@
 name: shader_presets
 description: "Shader presets using shader_buffers"
-version: 0.0.1
+version: 1.0.0
 homepage:
 
 environment:
@@ -25,6 +25,9 @@ flutter:
   shaders:
     - assets/shaders/shadertoy/water.frag
     - assets/shaders/shadertoy/page_curl.frag
+    - assets/shaders/shadertoy/raymarched_aurora_buffer_a.frag
+    - assets/shaders/shadertoy/raymarched_aurora_main.frag
+    
     - assets/shaders/gl_transitions/cube.frag
     - assets/shaders/gl_transitions/polka_dots_curtain.frag
     - assets/shaders/gl_transitions/radial.frag

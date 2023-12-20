@@ -9,7 +9,7 @@ class Page1 extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: ListView.builder(
-        itemCount: 30,
+        itemCount: 60,
         itemBuilder: (context, index) {
           return const CardEntry();
         },

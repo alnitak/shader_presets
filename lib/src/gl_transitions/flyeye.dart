@@ -47,6 +47,10 @@ class ShaderPresetFlyeye extends StatelessWidget {
         ('colorSeparation', colorSeparation),
       ],
       presetController: presetController,
+      onPointerMove: (controller, position) {
+        // Change the [position] uniform with pointer/mouse interaction
+        presetController?.setUniform(0, position.dx);
+      },
     );
   }
 }

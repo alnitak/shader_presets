@@ -7,23 +7,26 @@ import 'package:shader_buffers/shader_buffers.dart';
 /// - add that enum in [ShaderPresetController.getUniforms()] method. If
 ///   the new shader doesn't have additional float uniforms, then
 ///   return an empty list
-/// - write the [StatelessWidget] class (see `src/gl_transitions/` or 
+/// - write the [StatelessWidget] class (see `src/gl_transitions/` or
 ///   `src/shadertoy` folder for reference)
 /// - add the shader reference in `shaders` section of `pubspec.yaml`
 ///
-/// The `dynamic child` represents the texture (the `uniform sampler2D) used
+/// The `dynamic child` represents the texture (the `uniform sampler2D`) used
 /// by the shader. The `dynamic` must be the asset image path or a Widget.
 /// You can add as many childrens as you wish.
 
 enum ShaderPresetsEnum {
   water,
   pageCurl,
+  raymarchedAurora,
+
   cube,
   polkaDotsCurtain,
   radial,
   flyeye,
 }
 
+/// The uniform class
 class Uniform {
   Uniform({
     required this.name,
@@ -37,6 +40,7 @@ class Uniform {
   double value;
 }
 
+/// The uniforms list with method helpers
 class Uniforms {
   Uniforms(this.uniforms);
 
@@ -49,29 +53,48 @@ class Uniforms {
   double getValue(String name) {
     return uniforms.firstWhere((element) => element.name == name).value;
   }
+
+  List<double> getDoubleList() {
+    final ret = <double>[];
+    for (final u in uniforms) {
+      ret.add(u.value);
+    }
+    return ret;
+  }
 }
 
 ///
 class ShaderPresetController {
   void Function(dynamic uniforms)? _setUniforms;
+  void Function(int index, double newValue)? _setUniform;
+  Uniforms Function()? _getUniforms;
   ShaderController Function()? _getShaderController;
 
   void setController(
     void Function(dynamic uniforms) setUniforms,
+    void Function(int index, double newValue) setUniform,
+    Uniforms Function() getUniforms,
     ShaderController Function() getShaderController,
   ) {
     _setUniforms = setUniforms;
+    _setUniform = setUniform;
+    _getUniforms = getUniforms;
     _getShaderController = getShaderController;
   }
 
   void setUniforms(dynamic uniforms) => _setUniforms?.call(uniforms);
 
+  void setUniform(int index, double value) => _setUniform?.call(index, value);
+
+  Uniforms? getUniforms() => _getUniforms?.call();
+
   ShaderController? getShaderController() => _getShaderController?.call();
 
   /// Get the preset uniforms
-  Uniforms getUniforms(ShaderPresetsEnum preset) {
+  Uniforms getDefaultUniforms(ShaderPresetsEnum preset) {
     switch (preset) {
       /// Shadertoy
+      /// ////////////////////////////////////
       case ShaderPresetsEnum.water:
         return Uniforms([
           Uniform(
@@ -104,7 +127,36 @@ class ShaderPresetController {
           ),
         ]);
 
+      case ShaderPresetsEnum.raymarchedAurora:
+        return Uniforms([
+          Uniform(
+            name: 'maxSteps',
+            range: const RangeValues(10, 400),
+            defaultValue: 250,
+            value: 250,
+          ),
+          Uniform(
+            name: 'volSteps',
+            range: const RangeValues(10, 400),
+            defaultValue: 260,
+            value: 260,
+          ),
+          Uniform(
+            name: 'volLength',
+            range: const RangeValues(10, 300),
+            defaultValue: 175,
+            value: 175,
+          ),
+          Uniform(
+            name: 'volDensity',
+            range: const RangeValues(0, 1),
+            defaultValue: 0.02,
+            value: 0.02,
+          ),
+        ]);
+
       /// GL Transitions
+      /// ///////////////////////////////////////
       case ShaderPresetsEnum.cube:
         return Uniforms([
           Uniform(
