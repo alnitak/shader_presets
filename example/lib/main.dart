@@ -48,7 +48,7 @@ class _MyHomePageState extends State<MyHomePage> {
   bool useImages = true;
   ValueNotifier<List<double>> floatUniforms = ValueNotifier([]);
   ValueNotifier<ShaderPresetsEnum> preset =
-      ValueNotifier(ShaderPresetsEnum.raymarchedAurora);
+      ValueNotifier(ShaderPresetsEnum.cube);
   final presetController = ShaderPresetController();
 
   @override
@@ -67,8 +67,6 @@ class _MyHomePageState extends State<MyHomePage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Expanded(
-                  // width: 600,
-                  // height: 700,
                   child: createPreset(p),
                 ),
                 const SizedBox(height: 16),
@@ -140,9 +138,14 @@ class _MyHomePageState extends State<MyHomePage> {
           child2: child2,
           presetController: presetController,
         );
-      case ShaderPresetsEnum.raymarchedAurora:
-        ret = ShaderPresetRaymarchedAurora(
+      case ShaderPresetsEnum.barrel:
+        ret = ShaderPresetBarrel(
           presetController: presetController,
+          child: Page1(
+            onScrolling: (scrollingVelocity) {
+              presetController.setUniform(0, scrollingVelocity);
+            },
+          ),
         );
 
       case ShaderPresetsEnum.cube:
@@ -173,6 +176,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return ret;
   }
 
+  /// Creates a column with a slider for each preset uniforms
   Widget uniformSliders() {
     /// Get the preset min-max ranges and set its uniform to the starting range
     final uniforms = presetController.getDefaultUniforms(preset.value);

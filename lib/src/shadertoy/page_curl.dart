@@ -29,12 +29,29 @@ class ShaderPresetPageCurl extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final mainLayer = LayerBuffer(
+        shaderAssetsName:
+            'packages/shader_presets/assets/shaders/shadertoy/page_curl.frag')
+      ..setChannels([
+        IChannel(
+          assetsTexturePath: child1 is String ? child1 as String : null,
+          child: child1 is Widget ? child1 as Widget : null,
+        ),
+        IChannel(
+          assetsTexturePath: child2 is String ? child2 as String : null,
+          child: child2 is Widget ? child2 as Widget : null,
+        ),
+      ])
+      ..uniforms =
+          presetController!.getDefaultUniforms(ShaderPresetsEnum.pageCurl);
+
+    /// After getting the defaults, set the user passed values.
+    mainLayer.uniforms!.setDoubleList([radius]);
+
     final ret = ShaderPresetCommon.common(
       key: key,
-      frag: 'packages/shader_presets/assets/shaders/shadertoy/page_curl.frag',
+      mainLayer: mainLayer,
       presetType: ShaderPresetsEnum.pageCurl,
-      childs: [child1, child2],
-      uValues: [('radius', radius)],
       presetController: presetController,
       onPointerUp: (ctrl, position) {
         /// rewind when releasing the pointer
@@ -48,7 +65,7 @@ class ShaderPresetPageCurl extends StatelessWidget {
     /// When moving near the left side, we can swap children
     ret.shaderController.addConditionalOperation(
       (
-        layerBuffer: ret.mainImage,
+        layerBuffer: mainLayer,
         param: Param.iMouseXNormalized,
         checkType: CheckOperator.minor,
         checkValue: 0.1,
@@ -56,7 +73,7 @@ class ShaderPresetPageCurl extends StatelessWidget {
           if (result) {
             ret.shaderController
               ..pause()
-              ..swapChannels(ret.mainImage, 0, 1)
+              ..swapChannels(mainLayer, 0, 1)
               ..rewind();
           }
         },
