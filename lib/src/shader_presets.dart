@@ -18,7 +18,7 @@ import 'package:shader_buffers/shader_buffers.dart';
 enum ShaderPresetsEnum {
   water,
   pageCurl,
-  raymarchedAurora,
+  barrel,
 
   cube,
   polkaDotsCurtain,
@@ -26,54 +26,17 @@ enum ShaderPresetsEnum {
   flyeye,
 }
 
-/// The uniform class
-class Uniform {
-  Uniform({
-    required this.name,
-    required this.range,
-    required this.defaultValue,
-    required this.value,
-  });
-  RangeValues range;
-  double defaultValue;
-  String name;
-  double value;
-}
-
-/// The uniforms list with method helpers
-class Uniforms {
-  Uniforms(this.uniforms);
-
-  final List<Uniform> uniforms;
-
-  void setValue(String name, double value) {
-    uniforms.firstWhere((element) => element.name == name).value = value;
-  }
-
-  double getValue(String name) {
-    return uniforms.firstWhere((element) => element.name == name).value;
-  }
-
-  List<double> getDoubleList() {
-    final ret = <double>[];
-    for (final u in uniforms) {
-      ret.add(u.value);
-    }
-    return ret;
-  }
-}
-
 ///
 class ShaderPresetController {
   void Function(dynamic uniforms)? _setUniforms;
   void Function(int index, double newValue)? _setUniform;
-  Uniforms Function()? _getUniforms;
+  Uniforms? Function()? _getUniforms;
   ShaderController Function()? _getShaderController;
 
   void setController(
     void Function(dynamic uniforms) setUniforms,
     void Function(int index, double newValue) setUniform,
-    Uniforms Function() getUniforms,
+    Uniforms? Function() getUniforms,
     ShaderController Function() getShaderController,
   ) {
     _setUniforms = setUniforms;
@@ -127,31 +90,13 @@ class ShaderPresetController {
           ),
         ]);
 
-      case ShaderPresetsEnum.raymarchedAurora:
+      case ShaderPresetsEnum.barrel:
         return Uniforms([
           Uniform(
-            name: 'maxSteps',
-            range: const RangeValues(10, 400),
-            defaultValue: 250,
-            value: 250,
-          ),
-          Uniform(
-            name: 'volSteps',
-            range: const RangeValues(10, 400),
-            defaultValue: 260,
-            value: 260,
-          ),
-          Uniform(
-            name: 'volLength',
-            range: const RangeValues(10, 300),
-            defaultValue: 175,
-            value: 175,
-          ),
-          Uniform(
-            name: 'volDensity',
-            range: const RangeValues(0, 1),
-            defaultValue: 0.02,
-            value: 0.02,
+            name: 'distortion',
+            range: const RangeValues(-2, 2),
+            defaultValue: 0,
+            value: 0,
           ),
         ]);
 

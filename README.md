@@ -1,11 +1,8 @@
-https://www.shadertoy.com/view/clSyDt
-https://www.shadertoy.com/view/XtGGRt
-
 # Shader Presets
 
-A package which implements some ready to use shaders, like transitions (from [gl-transitions](https://gl-transitions.com/)) or [ShaderToy](https://www.shadertoy.com/)) and effects.
+A package which implements some ready to use shaders, like transitions (from [gl-transitions](https://gl-transitions.com/) or [ShaderToy](https://www.shadertoy.com/)) and effects.
 
-It uses the (shader_buffers)[https://github.com/alnitak/shader_buffers] package which simplifies the use of shaders.
+It uses the [shader_buffers](https://github.com/alnitak/shader_buffers) package which simplifies the use of shaders.
 
 There are few presets and more can be added quite easily
 
@@ -35,19 +32,17 @@ Here all the current presets available with their properties, many other can be 
 |                                   |**ShaderPresetFlyeye**<br/>progress, size, zoom, colorSeparation|
 
 
-## Adding a preset
+## Contributing
+
+#### Adding a preset
 
 In `shader_presets.dart`
 - add a [ShaderPresetsEnum] enum value
-- add that enum in [ShaderPresetController.getUniforms()] method. If
-  the new shader doesn't have additional float uniforms, then
-  return an empty list
-- write the [StatelessWidget] class (see `src/gl_transitions/` or
-  `src/shadertoy` folder for reference)
+- add that enum in [ShaderPresetController.getUniforms()] method. If the new shader doesn't have additional float uniforms, then return an empty list
+- write the [StatelessWidget] class (see `src/gl_transitions/` or `src/shadertoy` folder for reference)
 - add a shader reference in `shaders` section of `pubspec.yaml` to your fragment source
 
-The `dynamic child` represents the texture (the `uniform sampler2D`) used
-by the shader. It must be the asset image path or a Widget.
+The `dynamic child` represents the texture (the `uniform sampler2D`) used by the shader. It must be the asset image path or a Widget.
 You can add as many children as you wish based on the fragment usage.
 
 #### Add/Write the fragment shader
@@ -89,19 +84,8 @@ and
 // mandatory include for gl-transitions sources
 #include "../common/common_gl_transitions.frag"
 
-// https://github.com/gl-transitions/gl-transitions/tree/master/transitions/PolkaDotsCurtain.glsl
-
 //------------------ Here starts gl-transition source
-// author: bobylito
-// license: MIT
-const float SQRT_2 = 1.414213562373;
-uniform float dots;// = 20.0;
-uniform vec2 center;// = vec2(0, 0);
-
-vec4 transition(vec2 uv) {
-  bool nextImage = distance(fract(uv * dots), vec2(0.5, 0.5)) < ( progress / distance(uv, center));
-  return nextImage ? getToColor(uv) : getFromColor(uv);
-}
+...
 //------------------ Here ends gl-transition source
 
 // mandatory include for gl-transitions sources

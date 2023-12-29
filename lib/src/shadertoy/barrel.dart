@@ -6,15 +6,13 @@ import 'package:shader_presets/src/shader_preset_common.dart';
 import 'package:shader_presets/src/shader_presets.dart';
 
 /// Water shader
-class ShaderPresetWater extends StatelessWidget {
+class ShaderPresetBarrel extends StatelessWidget {
   ///
-  ShaderPresetWater({
+  ShaderPresetBarrel({
     required this.child,
     super.key,
     ShaderPresetController? presetController,
-    this.speed = 0.2,
-    this.frequency = 8,
-    this.amplitude = 1,
+    this.distortion = 0,
   }) : presetController = presetController ?? ShaderPresetController();
 
   ///
@@ -24,31 +22,29 @@ class ShaderPresetWater extends StatelessWidget {
   final ShaderPresetController? presetController;
 
   ///
-  final double speed;
-  final double frequency;
-  final double amplitude;
+  final double distortion;
 
   @override
   Widget build(BuildContext context) {
     final mainLayer = LayerBuffer(
         shaderAssetsName:
-            'packages/shader_presets/assets/shaders/shadertoy/water.frag')
+            'packages/shader_presets/assets/shaders/shadertoy/barrel.frag')
       ..setChannels([
         IChannel(
           assetsTexturePath: child is String ? child as String : null,
           child: child is Widget ? child as Widget : null,
         ),
       ])
-      ..uniforms = presetController!.getDefaultUniforms(ShaderPresetsEnum.water);
+      ..uniforms =
+          presetController!.getDefaultUniforms(ShaderPresetsEnum.barrel);
 
     /// After getting the defaults, set the user passed values.
-    mainLayer.uniforms!
-        .setDoubleList([speed, frequency, amplitude]);
+    mainLayer.uniforms!.setDoubleList([distortion]);
 
     return ShaderPresetCommon.common(
       key: key,
       mainLayer: mainLayer,
-      presetType: ShaderPresetsEnum.water,
+      presetType: ShaderPresetsEnum.barrel,
       presetController: presetController,
     );
   }

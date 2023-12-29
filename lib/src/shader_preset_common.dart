@@ -6,6 +6,8 @@ import 'package:shader_presets/src/shader_presets.dart';
 
 /// In case of using a preset with multiple childs, they must have
 /// the same size otherwise some of them will be stretched
+/// 
+/// Valid uniforms are only those set for [mainLayer]
 class ShaderPresetCommon extends StatelessWidget {
   ShaderPresetCommon._({
     required this.shaderController,
@@ -18,53 +20,18 @@ class ShaderPresetCommon extends StatelessWidget {
     super.key,
   });
 
-  /// Common factory to rule them all
+  /// Common factory
   factory ShaderPresetCommon.common({
-    required String frag,
+    required LayerBuffer mainLayer,
     required ShaderPresetsEnum presetType,
-    required List<dynamic> childs,
     Key? key,
     List<LayerBuffer> buffers = const [],
-    List<(String name, double value)> uValues = const [],
     bool startPaused = false,
     ShaderPresetController? presetController,
     void Function(ShaderController controller, Offset position)? onPointerDown,
     void Function(ShaderController controller, Offset position)? onPointerMove,
     void Function(ShaderController controller, Offset position)? onPointerUp,
   }) {
-    /// Check [childs]
-    var a = true;
-    for (final child in childs) {
-      a |= child is Widget || child is String || child is LayerBuffer;
-    }
-    assert(a, "Child(s) can be of type Widget or String('assets/path') only");
-
-    /// create layer
-    final main = LayerBuffer(
-      shaderAssetsName: frag,
-      floatUniforms:
-          List.generate(uValues.length, (index) => uValues[index].$2),
-    )..setChannels(
-        List.generate(
-          childs.length,
-          (index) => IChannel(
-            child: childs[index] is Widget ? childs[index] as Widget : null,
-            assetsTexturePath:
-                childs[index] is String ? childs[index] as String : null,
-            buffer: childs[index] is LayerBuffer
-                ? childs[index] as LayerBuffer
-                : null,
-          ),
-        ),
-      );
-
-    /// Set user uniforms
-    final controller = presetController ?? ShaderPresetController();
-    final u = controller.getDefaultUniforms(presetType);
-    for (final uniform in uValues) {
-      u.setValue(uniform.$1, uniform.$2);
-    }
-
     return ShaderPresetCommon._(
       key: key,
       buffers: buffers,
@@ -76,8 +43,8 @@ class ShaderPresetCommon extends StatelessWidget {
       onPointerUp: onPointerUp,
     )
       ..preset = presetType
-      ..uniforms = u
-      ..mainImage = main;
+      ..uniforms = mainLayer.uniforms
+      ..mainLayer = mainLayer;
   }
 
   /// Set the shader state at start
@@ -99,13 +66,13 @@ class ShaderPresetCommon extends StatelessWidget {
   final ShaderPresetController? presetController;
 
   /// The main layer shader
-  late LayerBuffer mainImage;
+  late LayerBuffer mainLayer;
 
   /// The current preset
   late ShaderPresetsEnum preset;
 
   /// The shader uniforms
-  late Uniforms uniforms;
+  Uniforms? uniforms;
 
   ShaderController _getShaderController() {
     return shaderController;
@@ -114,48 +81,46 @@ class ShaderPresetCommon extends StatelessWidget {
   /// Sets the uniform values for the current preset.
   /// Accepts a [Uniforms] or [List<double>] param.
   void _setUniforms(dynamic newUniforms) {
+    if (uniforms == null) return;
+
     // Check type of [newUniforms]
     assert(
       newUniforms is Uniforms || newUniforms is List<double>,
       'Please use [Uniforms] or [List<double>]!',
     );
-    // Check length of uniforms
-    assert(
-      (newUniforms is List<double> &&
-              newUniforms.length == uniforms.uniforms.length) ||
-          (newUniforms is Uniforms &&
-              newUniforms.uniforms.length == uniforms.uniforms.length),
-      '${preset.name} preset only accepts ${uniforms.uniforms.length} uniforms!',
-    );
 
     // Generate the double list
-    var newUniformsList = <double>[];
     if (newUniforms is Uniforms) {
-      newUniformsList = List.generate(
-        newUniforms.uniforms.length,
-        (index) => newUniforms.uniforms[index].value,
-      );
+      uniforms = newUniforms;
     }
-    if (newUniforms is List<double>) newUniformsList = newUniforms;
+    if (newUniforms is List<double>) {
+      for (var i = 0; i < mainLayer.uniforms!.uniforms.length; i++) {
+        mainLayer.uniforms!.uniforms[i].value = newUniforms[i];
+      }
+    }
 
-    mainImage.floatUniforms = newUniformsList;
+    mainLayer.uniforms = uniforms;
   }
 
+  /// Set the uniform at [index]
   void _setUniform(int index, double value) {
-    assert(index < uniforms.uniforms.length, 'Uniform index out of range!');
+    if (uniforms == null) return;
+   
+    assert(index < uniforms!.uniforms.length,
+        'Uniform index out of range!');
     var newValue = value;
-    if (value > uniforms.uniforms[index].range.end) {
-      newValue = uniforms.uniforms[index].range.end;
+    if (value > uniforms!.uniforms[index].range.end) {
+      newValue = uniforms!.uniforms[index].range.end;
     }
-    if (value < uniforms.uniforms[index].range.start) {
-      newValue = uniforms.uniforms[index].range.start;
+    if (value < uniforms!.uniforms[index].range.start) {
+      newValue = uniforms!.uniforms[index].range.start;
     }
-    uniforms.uniforms[index].value = newValue;
-    mainImage.floatUniforms = uniforms.getDoubleList();
+    uniforms!.uniforms[index].value = newValue;
+    mainLayer.uniforms = uniforms;
   }
 
   /// Get the current uniforms
-  Uniforms _getUniforms() {
+  Uniforms? _getUniforms() {
     return uniforms;
   }
 
@@ -170,7 +135,7 @@ class ShaderPresetCommon extends StatelessWidget {
 
     return ShaderBuffers(
       controller: shaderController,
-      mainImage: mainImage,
+      mainImage: mainLayer,
       buffers: buffers,
       startPaused: startPaused,
       onPointerDownNormalized: onPointerDown,
