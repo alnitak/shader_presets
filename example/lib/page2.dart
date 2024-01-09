@@ -32,13 +32,17 @@ class _Page2State extends State<Page2> {
               child: Column(
                 children: [
                   const Spacer(),
-                  AnimatedRotation(
-                    turns: turns,
-                    duration: const Duration(seconds: 1),
-                    onEnd: () => setState(() => turns += 0.2),
-                    child: const FlutterLogo(
-                      size: 250,
-                    ),
+                  StatefulBuilder(
+                    builder: (context, state) {
+                      return AnimatedRotation(
+                        turns: turns,
+                        duration: const Duration(seconds: 1),
+                        onEnd: () => state(() => turns += 0.2),
+                        child: const FlutterLogo(
+                          size: 150,
+                        ),
+                      );
+                    },
                   ),
                   const Spacer(),
                   const Text(
@@ -47,7 +51,7 @@ class _Page2State extends State<Page2> {
                     '\ntransitions from gl-transitions.com '
                     '\nor ShaderToy.com',
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                   ),
                   const Spacer(),
                   ElevatedButton(

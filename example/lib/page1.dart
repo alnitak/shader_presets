@@ -60,7 +60,7 @@ class Page1 extends StatelessWidget {
         child: ListView.builder(
           itemCount: 60,
           itemBuilder: (context, index) {
-            return const CardEntry();
+            return CardEntry(index: index);
           },
         ),
       ),
@@ -69,7 +69,12 @@ class Page1 extends StatelessWidget {
 }
 
 class CardEntry extends StatelessWidget {
-  const CardEntry({super.key});
+  const CardEntry({
+    required this.index,
+    super.key,
+  });
+
+  final int index;
 
   @override
   Widget build(BuildContext context) {
@@ -81,25 +86,25 @@ class CardEntry extends StatelessWidget {
           children: [
             const Icon(Icons.account_circle, size: 42),
             const SizedBox(width: 16),
-            const Column(
+            Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  'Widget 1',
-                  style: TextStyle(fontWeight: FontWeight.w900),
+                  'Card ${index+1}',
+                  style: const TextStyle(fontWeight: FontWeight.w900),
                 ),
-                Text('shader_preset'),
+                const Text('shader_preset'),
               ],
             ),
             const Spacer(),
             ElevatedButton(
               onPressed: () {
-                print('Widget 1');
+                debugPrint('Card 1');
               },
-              child: const Text('Widget 1'),
+              child: Text('Card ${index+1}'),
             ),
-            const Icon(Icons.add_box_rounded, size: 42),
+            const Icon(Icons.add_reaction_outlined, size: 42),
           ],
         ),
       ),

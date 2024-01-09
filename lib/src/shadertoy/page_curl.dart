@@ -66,7 +66,7 @@ class ShaderPresetPageCurl extends StatelessWidget {
     ret.shaderController.addConditionalOperation(
       (
         layerBuffer: mainLayer,
-        param: Param.iMouseXNormalized,
+        param: Param(CommonUniform.iMouseXNormalized),
         checkType: CheckOperator.minor,
         checkValue: 0.1,
         operation: (ctrl, result) {

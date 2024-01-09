@@ -3,6 +3,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:shader_buffers/shader_buffers.dart' show Uniforms;
 import 'package:shader_preset_example/page1.dart';
 import 'package:shader_preset_example/page2.dart';
 import 'package:shader_presets/shader_presets.dart';
@@ -49,7 +50,16 @@ class _MyHomePageState extends State<MyHomePage> {
   ValueNotifier<List<double>> floatUniforms = ValueNotifier([]);
   ValueNotifier<ShaderPresetsEnum> preset =
       ValueNotifier(ShaderPresetsEnum.cube);
-  final presetController = ShaderPresetController();
+  late ShaderPresetController presetController;
+
+  /// Get the preset min-max ranges and set its uniform to the starting range
+  late Uniforms uniforms;
+
+  @override
+  void initState() {
+    super.initState();
+    presetController = ShaderPresetController();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -66,12 +76,16 @@ class _MyHomePageState extends State<MyHomePage> {
             return Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Expanded(
+                AspectRatio(
+                  aspectRatio: 16 / 9,
                   child: createPreset(p),
                 ),
-                const SizedBox(height: 16),
+                const Spacer(),
                 const Divider(),
+                uniformSliders(),
                 Wrap(
+                  spacing: 4,
+                  runSpacing: 4,
                   children: List.generate(
                     ShaderPresetsEnum.values.length,
                     (index) {
@@ -84,7 +98,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     },
                   ),
                 ),
-                uniformSliders(),
+                const SizedBox(height: 8),
                 Row(
                   children: [
                     ElevatedButton(
@@ -123,9 +137,10 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget createPreset(ShaderPresetsEnum p) {
-    Widget ret = const SizedBox.shrink();
+    uniforms = presetController.getDefaultUniforms(p);
     final dynamic child1 = useImages ? 'assets/flutter.png' : const Page1();
     final dynamic child2 = useImages ? 'assets/dash.png' : const Page2();
+    Widget ret;
     switch (p) {
       case ShaderPresetsEnum.water:
         ret = ShaderPresetWater(
@@ -153,6 +168,15 @@ class _MyHomePageState extends State<MyHomePage> {
           child1: child1,
           child2: child2,
           presetController: presetController,
+          uniforms: uniforms,
+          // onProgressReachedOne: () {
+          //   /// Trying to reset 'progress' slider when it reaches 1
+          //   /// but the user is still moving over it
+          //   Future.delayed(Duration.zero, () {
+          //     floatUniforms.value[0] = 0;
+          //     floatUniforms.value = floatUniforms.value.toList();
+          //   });
+          // },
         );
       case ShaderPresetsEnum.polkaDotsCurtain:
         ret = ShaderPresetPolkaDotsCurtain(
@@ -178,9 +202,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   /// Creates a column with a slider for each preset uniforms
   Widget uniformSliders() {
-    /// Get the preset min-max ranges and set its uniform to the starting range
-    final uniforms = presetController.getDefaultUniforms(preset.value);
-
     /// Build the uniforms list
     floatUniforms = ValueNotifier(
       List.generate(uniforms.uniforms.length, (index) {
@@ -213,6 +234,26 @@ class _MyHomePageState extends State<MyHomePage> {
                         presetController.setUniforms(floatUniforms.value);
                       },
                     ),
+                  ),
+
+                  /// Button to animate the uniform
+                  IconButton(
+                    onPressed: () {
+                      presetController.getShaderController()!.animateUniform(
+                            uniformName: uniforms.uniforms[index].name,
+                            begin: uniforms.uniforms[index].range.start,
+                            end: uniforms.uniforms[index].range.end,
+                            onAnimationEnded: (ctrl, uniformValue) {
+                              /// Just update sliders
+                              Future.delayed(Duration.zero, () {
+                                floatUniforms.value[index] = uniformValue;
+                                floatUniforms.value =
+                                    floatUniforms.value.toList();
+                              });
+                            },
+                          );
+                    },
+                    icon: const Icon(Icons.animation),
                   ),
                 ],
               );

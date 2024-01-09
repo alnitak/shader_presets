@@ -94,7 +94,7 @@ class ShaderPresetController {
         return Uniforms([
           Uniform(
             name: 'distortion',
-            range: const RangeValues(-2, 2),
+            range: const RangeValues(-1, 2),
             defaultValue: 0,
             value: 0,
           ),

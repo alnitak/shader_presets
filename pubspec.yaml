@@ -1,5 +1,5 @@
 name: shader_presets
-description: "Shader presets using shader_buffers"
+description: "Shader presets using shader_buffers package"
 version: 1.0.0
 homepage:
 
