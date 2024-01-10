@@ -63,7 +63,7 @@ In `shader_presets.dart`
 - write the [StatelessWidget] class (see `src/gl_transitions/` or `src/shadertoy` folder for reference)
 - add a shader reference in `shaders` section of `pubspec.yaml` to your fragment source
 
-The `dynamic child` represents the texture (the `uniform sampler2D`) the shader uses. It must be the asset image path or a Widget.
+The `dynamic child` represents the texture (the `uniform sampler2D` in the shader source) the shader uses. It must be the asset image path or a Widget.
 You can add as many children as you wish based on the fragment usage.
 
 #### Add/Write the fragment shader
