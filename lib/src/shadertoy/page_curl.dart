@@ -55,9 +55,7 @@ class ShaderPresetPageCurl extends StatelessWidget {
       presetController: presetController,
       onPointerUp: (ctrl, position) {
         /// rewind when releasing the pointer
-        ctrl
-          ..play()
-          ..rewind();
+        ctrl..rewind()..play();
       },
     );
 
@@ -68,7 +66,7 @@ class ShaderPresetPageCurl extends StatelessWidget {
         layerBuffer: mainLayer,
         param: Param(CommonUniform.iMouseXNormalized),
         checkType: CheckOperator.minor,
-        checkValue: 0.1,
+        checkValue: 0.05,
         operation: (ctrl, result) {
           if (result) {
             ret.shaderController

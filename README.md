@@ -1,6 +1,6 @@
 # Shader Presets
 
-A package which implements some ready to use shaders, like transitions (from [gl-transitions](https://gl-transitions.com/) or [ShaderToy](https://www.shadertoy.com/)) and effects.
+A package which implements some ready to use shaders, like transitions from [gl-transitions](https://gl-transitions.com/) and effects from [ShaderToy](https://www.shadertoy.com/).
 
 It uses the [shader_buffers](https://github.com/alnitak/shader_buffers) package which simplifies the use of shaders.
 
@@ -16,20 +16,40 @@ ShaderPresetCube(
     child2: child2,
     presetController: presetController,
     progress: 0, // This is common to all gl-transitions
-    smoothness: 1, // This is the parameter of this Cube shader
+    reflection: 1, // This is one parameter of this Cube shader
 )
 ```
 
 `presetController` lets you get/set uniforms and get the shader controllor.
-Shader controllor let you play/pause/rewind, add conditionals operation to check pointer position, get its state and swap texture channels.
+Shader controllor let you play/pause/rewind, add conditionals operation to check pointer position, get its state, swap texture channels and animate custom uniforms values.
 
-Here all the current presets available with their properties, many other can be easily added:
-|from *ShaderToy*|from *gl-transitions*|
+**animate a custom uniform**:
+```dart
+presetController.getShaderController()!.animateUniform(
+    uniformName: 'progress',
+    begin: 0,
+    end: 1,
+    duration: const Duration(milliseconds: 600),
+    curve: Curves.decelerate,
+    onAnimationEnded: (ctrl, uniformValue) {
+        ...
+    },
+);
+```
+
+
+Here all the current presets available with their uniform parameters, many other can be easily added:
+|from *ShaderToy*||
 |-|-|
-|**ShaderPresetWater**<br/>speed, frequency, amplitude|**ShaderPresetCube**<br/>progress, persp, unzoom, reflection, floating|
-|**ShaderPresetPageCurl**<br/>radius|**ShaderPresetPolkaDotsCurtain**<br/>progress, dots, centerX, centerY|
-|                                   |**ShaderPresetRadial**<br/>progress, smoothness|
-|                                   |**ShaderPresetFlyeye**<br/>progress, size, zoom, colorSeparation|
+|**ShaderPresetWater**<br/>speed, frequency, amplitude||
+|**ShaderPresetPageCurl**<br/>radius||
+
+|from *gl-transitions*||
+|-|-|
+|**ShaderPresetCube**<br/>progress, persp, unzoom, reflection, floating||
+|**ShaderPresetPolkaDotsCurtain**<br/>progress, dots, centerX, centerY|
+|**ShaderPresetRadial**<br/>progress, smoothness||
+|**ShaderPresetFlyeye**<br/>progress, size, zoom, colorSeparation||
 
 
 ## Contributing

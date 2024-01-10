@@ -103,7 +103,7 @@ class CardEntry extends StatelessWidget {
                 backgroundColor: MaterialStatePropertyAll(Colors.deepPurple),
               ),
               onPressed: () {
-                debugPrint('Card 1');
+                debugPrint('Card ${index + 1}');
               },
               child: Text('Card ${index + 1}'),
             ),

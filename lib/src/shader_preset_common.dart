@@ -5,7 +5,8 @@ import 'package:shader_buffers/shader_buffers.dart';
 import 'package:shader_presets/src/shader_presets.dart';
 
 /// In case of using a preset with multiple childs, they must have
-/// the same size otherwise some of them will be stretched
+/// the same size otherwise some of them will be stretched to the first
+/// child found.
 /// 
 /// Valid uniforms are only those set for [mainLayer]
 class ShaderPresetCommon extends StatelessWidget {

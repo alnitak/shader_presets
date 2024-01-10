@@ -2,6 +2,7 @@
 
 import 'dart:ui';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shader_buffers/shader_buffers.dart' show Uniforms;
 import 'package:shader_preset_example/page1.dart';
@@ -63,76 +64,85 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final Widget page = Padding(
+      padding: const EdgeInsets.all(32),
+      child: ValueListenableBuilder(
+        valueListenable: preset,
+        builder: (_, p, __) {
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              AspectRatio(
+                aspectRatio: 16 / 9,
+                child: createPreset(p),
+              ),
+              const Spacer(),
+              const Divider(),
+              uniformSliders(),
+              Wrap(
+                spacing: 4,
+                runSpacing: 4,
+                children: List.generate(
+                  ShaderPresetsEnum.values.length,
+                  (index) {
+                    return ElevatedButton(
+                      onPressed: () {
+                        preset.value = ShaderPresetsEnum.values[index];
+                      },
+                      child: Text(ShaderPresetsEnum.values[index].name),
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      if (!useImages) {
+                        if (context.mounted) {
+                          setState(() {
+                            useImages = true;
+                          });
+                        }
+                      }
+                    },
+                    child: const Text('use images'),
+                  ),
+                  const SizedBox(width: 16),
+                  ElevatedButton(
+                    onPressed: () {
+                      if (useImages) {
+                        if (context.mounted) {
+                          setState(() {
+                            useImages = false;
+                          });
+                        }
+                      }
+                    },
+                    child: const Text('use widgets'),
+                  ),
+                ],
+              ),
+            ],
+          );
+        },
+      ),
+    );
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: const Text('Shader Presets demo'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(32),
-        child: ValueListenableBuilder(
-          valueListenable: preset,
-          builder: (_, p, __) {
-            return Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                AspectRatio(
-                  aspectRatio: 16 / 9,
-                  child: createPreset(p),
-                ),
-                const Spacer(),
-                const Divider(),
-                uniformSliders(),
-                Wrap(
-                  spacing: 4,
-                  runSpacing: 4,
-                  children: List.generate(
-                    ShaderPresetsEnum.values.length,
-                    (index) {
-                      return ElevatedButton(
-                        onPressed: () {
-                          preset.value = ShaderPresetsEnum.values[index];
-                        },
-                        child: Text(ShaderPresetsEnum.values[index].name),
-                      );
-                    },
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Row(
-                  children: [
-                    ElevatedButton(
-                      onPressed: () {
-                        if (!useImages) {
-                          if (context.mounted) {
-                            setState(() {
-                              useImages = true;
-                            });
-                          }
-                        }
-                      },
-                      child: const Text('use images'),
-                    ),
-                    const SizedBox(width: 16),
-                    ElevatedButton(
-                      onPressed: () {
-                        if (useImages) {
-                          if (context.mounted) {
-                            setState(() {
-                              useImages = false;
-                            });
-                          }
-                        }
-                      },
-                      child: const Text('use widgets'),
-                    ),
-                  ],
-                ),
-              ],
-            );
-          },
-        ),
-      ),
+      body: kIsWeb
+          ? Center(
+            child: AspectRatio(
+                aspectRatio: 2 / 3,
+                child: page,
+              ),
+          )
+          : page,
     );
   }
 

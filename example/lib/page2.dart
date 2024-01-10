@@ -48,7 +48,7 @@ class _Page2State extends State<Page2> {
                   const Text(
                     'A package which implements some ready  to use'
                     '\nshaders, like transitions from'
-                    '\ngl-transitions.com or ShaderToy.com',
+                    '\ngl-transitions.com and ShaderToy.com',
                     textAlign: TextAlign.center,
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
                   ),
