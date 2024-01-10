@@ -4,7 +4,7 @@ A package that implements some ready-to-use shaders, like transitions from [gl-t
 
 It uses the [shader_buffers](https://github.com/alnitak/shader_buffers) package which simplifies the use of shaders.
 
-There are few presets and more can be added quite easily
+There are few presets and more can be added quite easily.
 
 ## Getting Started
 Simply as:
