@@ -1,6 +1,6 @@
 name: shader_presets
 description: "A bunch of ready to use shader presets using shader_buffers package"
-version: 1.0.0
+version: 1.0.1
 homepage: https://github.com/alnitak/shader_presets
 issue_tracker: https://github.com/alnitak/shader_presets/issues
 repository: https://github.com/alnitak/shader_presets

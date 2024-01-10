@@ -41,16 +41,16 @@ presetController.getShaderController()!.animateUniform(
 Here all the current presets available with their uniform parameters, many others can be easily added:
 |from *ShaderToy*||
 |-|-|
-|**ShaderPresetBarrel**<br/>distortion|![img](https://github.com/alnitak/shader_presets/blob/main/img/barrel.gif)|
-|**ShaderPresetWater**<br/>speed, frequency, amplitude|![img](https://github.com/alnitak/shader_presets/blob/main/img/water.gif)|
-|**ShaderPresetPageCurl**<br/>radius|![img](https://github.com/alnitak/shader_presets/blob/main/img/page_curl.gif)|
+|**ShaderPresetBarrel**<br/>distortion|![img](https://github.com/alnitak/shader_presets/raw/main/img/barrel.gif)|
+|**ShaderPresetWater**<br/>speed, frequency, amplitude|![img](https://github.com/alnitak/shader_presets/raw/main/img/water.gif)|
+|**ShaderPresetPageCurl**<br/>radius|![img](https://github.com/alnitak/shader_presets/raw/main/img/page_curl.gif)|
 
 |from *gl-transitions*||
 |-|-|
-|**ShaderPresetCube**<br/>progress, persp, unzoom, reflection, floating|![img](https://github.com/alnitak/shader_presets/blob/main/img/cube.gif)|
-|**ShaderPresetPolkaDotsCurtain**<br/>progress, dots, centerX, centerY|![img](https://github.com/alnitak/shader_presets/blob/main/img/polkaDotsCurtain.gif)|
-|**ShaderPresetRadial**<br/>progress, smoothness|![img](https://github.com/alnitak/shader_presets/blob/main/img/radial.gif)|
-|**ShaderPresetFlyeye**<br/>progress, size, zoom, colorSeparation|![img](https://github.com/alnitak/shader_presets/blob/main/img/flyeye.gif)|
+|**ShaderPresetCube**<br/>progress, persp, unzoom, reflection, floating|![img](https://github.com/alnitak/shader_presets/raw/main/img/cube.gif)|
+|**ShaderPresetPolkaDotsCurtain**<br/>progress, dots, centerX, centerY|![img](https://github.com/alnitak/shader_presets/raw/main/img/polkaDotsCurtain.gif)|
+|**ShaderPresetRadial**<br/>progress, smoothness|![img](https://github.com/alnitak/shader_presets/raw/main/img/radial.gif)|
+|**ShaderPresetFlyeye**<br/>progress, size, zoom, colorSeparation|![img](https://github.com/alnitak/shader_presets/raw/main/img/flyeye.gif)|
 
 
 ## Contributing
