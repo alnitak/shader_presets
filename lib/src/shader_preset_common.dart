@@ -7,7 +7,7 @@ import 'package:shader_presets/src/shader_presets.dart';
 /// In case of using a preset with multiple childs, they must have
 /// the same size otherwise some of them will be stretched to the first
 /// child found.
-/// 
+///
 /// Valid uniforms are only those set for [mainLayer]
 class ShaderPresetCommon extends StatelessWidget {
   ShaderPresetCommon._({
@@ -106,9 +106,11 @@ class ShaderPresetCommon extends StatelessWidget {
   /// Set the uniform at [index]
   void _setUniform(int index, double value) {
     if (uniforms == null) return;
-   
-    assert(index < uniforms!.uniforms.length,
-        'Uniform index out of range!');
+
+    assert(
+      index < uniforms!.uniforms.length,
+      'Uniform index out of range!',
+    );
     var newValue = value;
     if (value > uniforms!.uniforms[index].range.end) {
       newValue = uniforms!.uniforms[index].range.end;

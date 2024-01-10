@@ -37,8 +37,9 @@ class ShaderPresetFlyeye extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final mainLayer = LayerBuffer(
-        shaderAssetsName:
-            'packages/shader_presets/assets/shaders/gl_transitions/flyeye.frag')
+      shaderAssetsName:
+          'packages/shader_presets/assets/shaders/gl_transitions/flyeye.frag',
+    )
       ..setChannels([
         IChannel(
           assetsTexturePath: child1 is String ? child1 as String : null,
@@ -82,7 +83,8 @@ class ShaderPresetFlyeye extends StatelessWidget {
             /// set a new uniform value, so it will override
             /// the new value set here
             ctrl.stopAnimateUniform(
-                uniformName: mainLayer.uniforms!.uniforms[0].name);
+              uniformName: mainLayer.uniforms!.uniforms[0].name,
+            );
 
             ret.shaderController
               ..swapChannels(mainLayer, 0, 1)

@@ -27,8 +27,9 @@ class ShaderPresetBarrel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final mainLayer = LayerBuffer(
-        shaderAssetsName:
-            'packages/shader_presets/assets/shaders/shadertoy/barrel.frag')
+      shaderAssetsName:
+          'packages/shader_presets/assets/shaders/shadertoy/barrel.frag',
+    )
       ..setChannels([
         IChannel(
           assetsTexturePath: child is String ? child as String : null,

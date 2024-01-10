@@ -30,8 +30,9 @@ class ShaderPresetPageCurl extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final mainLayer = LayerBuffer(
-        shaderAssetsName:
-            'packages/shader_presets/assets/shaders/shadertoy/page_curl.frag')
+      shaderAssetsName:
+          'packages/shader_presets/assets/shaders/shadertoy/page_curl.frag',
+    )
       ..setChannels([
         IChannel(
           assetsTexturePath: child1 is String ? child1 as String : null,
@@ -55,7 +56,9 @@ class ShaderPresetPageCurl extends StatelessWidget {
       presetController: presetController,
       onPointerUp: (ctrl, position) {
         /// rewind when releasing the pointer
-        ctrl..rewind()..play();
+        ctrl
+          ..rewind()
+          ..play();
       },
     );
 

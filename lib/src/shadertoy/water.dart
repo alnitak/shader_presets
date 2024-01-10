@@ -31,19 +31,20 @@ class ShaderPresetWater extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final mainLayer = LayerBuffer(
-        shaderAssetsName:
-            'packages/shader_presets/assets/shaders/shadertoy/water.frag')
+      shaderAssetsName:
+          'packages/shader_presets/assets/shaders/shadertoy/water.frag',
+    )
       ..setChannels([
         IChannel(
           assetsTexturePath: child is String ? child as String : null,
           child: child is Widget ? child as Widget : null,
         ),
       ])
-      ..uniforms = presetController!.getDefaultUniforms(ShaderPresetsEnum.water);
+      ..uniforms =
+          presetController!.getDefaultUniforms(ShaderPresetsEnum.water);
 
     /// After getting the defaults, set the user passed values.
-    mainLayer.uniforms!
-        .setDoubleList([speed, frequency, amplitude]);
+    mainLayer.uniforms!.setDoubleList([speed, frequency, amplitude]);
 
     return ShaderPresetCommon.common(
       key: key,
