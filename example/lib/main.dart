@@ -46,7 +46,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  bool useImages = true;
+  bool useImages = false;
   ValueNotifier<List<double>> floatUniforms = ValueNotifier([]);
   ValueNotifier<ShaderPresetsEnum> preset =
       ValueNotifier(ShaderPresetsEnum.cube);
@@ -168,15 +168,6 @@ class _MyHomePageState extends State<MyHomePage> {
           child1: child1,
           child2: child2,
           presetController: presetController,
-          uniforms: uniforms,
-          // onProgressReachedOne: () {
-          //   /// Trying to reset 'progress' slider when it reaches 1
-          //   /// but the user is still moving over it
-          //   Future.delayed(Duration.zero, () {
-          //     floatUniforms.value[0] = 0;
-          //     floatUniforms.value = floatUniforms.value.toList();
-          //   });
-          // },
         );
       case ShaderPresetsEnum.polkaDotsCurtain:
         ret = ShaderPresetPolkaDotsCurtain(

@@ -91,7 +91,7 @@ class CardEntry extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  'Card ${index+1}',
+                  'Card ${index + 1}',
                   style: const TextStyle(fontWeight: FontWeight.w900),
                 ),
                 const Text('shader_preset'),
@@ -99,12 +99,14 @@ class CardEntry extends StatelessWidget {
             ),
             const Spacer(),
             ElevatedButton(
+              style: const ButtonStyle(
+                backgroundColor: MaterialStatePropertyAll(Colors.deepPurple),
+              ),
               onPressed: () {
                 debugPrint('Card 1');
               },
-              child: Text('Card ${index+1}'),
+              child: Text('Card ${index + 1}'),
             ),
-            const Icon(Icons.add_reaction_outlined, size: 42),
           ],
         ),
       ),

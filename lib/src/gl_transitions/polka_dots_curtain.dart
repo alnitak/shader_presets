@@ -55,7 +55,7 @@ class ShaderPresetPolkaDotsCurtain extends StatelessWidget {
     /// After getting the defaults, set the user passed values.
     mainLayer.uniforms!.setDoubleList([progress, dots, centerX, centerY]);
 
-    return ShaderPresetCommon.common(
+    final ret = ShaderPresetCommon.common(
       key: key,
       mainLayer: mainLayer,
       presetType: ShaderPresetsEnum.polkaDotsCurtain,
@@ -65,5 +65,33 @@ class ShaderPresetPolkaDotsCurtain extends StatelessWidget {
       //   presetController?.setUniform(0, position.dx);
       // },
     );
+
+    /// Add a trigger for the "progress" uniform.
+    /// When it reach 1.0, we can swap children.
+    ret.shaderController.addConditionalOperation(
+      (
+        layerBuffer: mainLayer,
+        param: Param(CommonUniform.customUniform, uniformId: 0),
+        checkType: CheckOperator.equal,
+        checkValue: 1,
+        operation: (ctrl, result) {
+          if (result) {
+            mainLayer.uniforms!.setValueByIndex(0, 0);
+
+            /// Eventually stop the animation because the animation can
+            /// set a new uniform value, so it will override
+            /// the new value set here
+            ctrl.stopAnimateUniform(
+                uniformName: mainLayer.uniforms!.uniforms[0].name);
+
+            ret.shaderController
+              ..swapChannels(mainLayer, 0, 1)
+              ..rewind();
+          }
+        },
+      ),
+    );
+
+    return ret;
   }
 }

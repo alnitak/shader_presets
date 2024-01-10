@@ -39,26 +39,25 @@ class _Page2State extends State<Page2> {
                         duration: const Duration(seconds: 1),
                         onEnd: () => state(() => turns += 0.2),
                         child: const FlutterLogo(
-                          size: 150,
+                          size: 130,
                         ),
                       );
                     },
                   ),
                   const Spacer(),
                   const Text(
-                    'A package which implements'
-                    '\nsome ready to use shaders, like'
-                    '\ntransitions from gl-transitions.com '
-                    '\nor ShaderToy.com',
+                    'A package which implements some ready  to use'
+                    '\nshaders, like transitions from'
+                    '\ngl-transitions.com or ShaderToy.com',
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
                   ),
                   const Spacer(),
                   ElevatedButton(
                     onPressed: () {},
                     child: const Text('Go Back'),
                   ),
-                  const SizedBox(height: 32),
+                  const Spacer(),
                 ],
               ),
             ),
