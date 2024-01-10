@@ -42,15 +42,15 @@ Here all the current presets available with their uniform parameters, many other
 |from *ShaderToy*||
 |-|-|
 |**ShaderPresetBarrel**<br/>distortion|![img](https://github.com/alnitak/shader_presets/blob/main/img/barrel.gif)|
-|**ShaderPresetWater**<br/>speed, frequency, amplitude||
-|**ShaderPresetPageCurl**<br/>radius||
+|**ShaderPresetWater**<br/>speed, frequency, amplitude|![img](https://github.com/alnitak/shader_presets/blob/main/img/water.gif)|
+|**ShaderPresetPageCurl**<br/>radius|![img](https://github.com/alnitak/shader_presets/blob/main/img/page_curl.gif)|
 
 |from *gl-transitions*||
 |-|-|
-|**ShaderPresetCube**<br/>progress, persp, unzoom, reflection, floating||
-|**ShaderPresetPolkaDotsCurtain**<br/>progress, dots, centerX, centerY|
-|**ShaderPresetRadial**<br/>progress, smoothness||
-|**ShaderPresetFlyeye**<br/>progress, size, zoom, colorSeparation||
+|**ShaderPresetCube**<br/>progress, persp, unzoom, reflection, floating|![img](https://github.com/alnitak/shader_presets/blob/main/img/cube.gif)|
+|**ShaderPresetPolkaDotsCurtain**<br/>progress, dots, centerX, centerY|![img](https://github.com/alnitak/shader_presets/blob/main/img/polkaDotsCurtain.gif)|
+|**ShaderPresetRadial**<br/>progress, smoothness|![img](https://github.com/alnitak/shader_presets/blob/main/img/radial.gif)|
+|**ShaderPresetFlyeye**<br/>progress, size, zoom, colorSeparation|![img](https://github.com/alnitak/shader_presets/blob/main/img/flyeye.gif)|
 
 
 ## Contributing
