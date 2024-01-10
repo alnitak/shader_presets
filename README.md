@@ -1,6 +1,6 @@
 # Shader Presets
 
-A package which implements some ready to use shaders, like transitions from [gl-transitions](https://gl-transitions.com/) and effects from [ShaderToy](https://www.shadertoy.com/).
+A package that implements some ready-to-use shaders, like transitions from [gl-transitions](https://gl-transitions.com/) and effects from [ShaderToy](https://www.shadertoy.com/).
 
 It uses the [shader_buffers](https://github.com/alnitak/shader_buffers) package which simplifies the use of shaders.
 
@@ -12,7 +12,7 @@ Simply as:
 ```dart
 final presetController = ShaderPresetController();
 ShaderPresetCube(
-    child1: child1, // children can be either the path to the asset image ora a widget
+    child1: child1, // children can be either the path to the asset image or a widget
     child2: child2,
     presetController: presetController,
     progress: 0, // This is common to all gl-transitions
@@ -20,8 +20,8 @@ ShaderPresetCube(
 )
 ```
 
-`presetController` lets you get/set uniforms and get the shader controllor.
-Shader controllor let you play/pause/rewind, add conditionals operation to check pointer position, get its state, swap texture channels and animate custom uniforms values.
+`presetController` lets you get/set uniforms and get the shader controller.
+The Shader controller lets you play/pause/rewind, add conditionals operation to check pointer position, get its state, swap texture channels, and animate custom uniform values.
 
 **animate a custom uniform**:
 ```dart
@@ -38,9 +38,10 @@ presetController.getShaderController()!.animateUniform(
 ```
 
 
-Here all the current presets available with their uniform parameters, many other can be easily added:
+Here all the current presets available with their uniform parameters, many others can be easily added:
 |from *ShaderToy*||
 |-|-|
+|**ShaderPresetBarrel**<br/>distortion|![img](https://github.com/alnitak/shader_presets/blob/main/img/barrel.gif)|
 |**ShaderPresetWater**<br/>speed, frequency, amplitude||
 |**ShaderPresetPageCurl**<br/>radius||
 
@@ -62,14 +63,14 @@ In `shader_presets.dart`
 - write the [StatelessWidget] class (see `src/gl_transitions/` or `src/shadertoy` folder for reference)
 - add a shader reference in `shaders` section of `pubspec.yaml` to your fragment source
 
-The `dynamic child` represents the texture (the `uniform sampler2D`) used by the shader. It must be the asset image path or a Widget.
+The `dynamic child` represents the texture (the `uniform sampler2D`) the shader uses. It must be the asset image path or a Widget.
 You can add as many children as you wish based on the fragment usage.
 
 #### Add/Write the fragment shader
 
-There are some common headers to put at the begin or to the end of the fragment source:
+There are some common headers to put at the beginning or at the end of the fragment source:
 
-**common_header.frag** this is common to all the sources. It defines the common uniforms which `shader_buffers` package uses and the uniforms it adds can be used when writing your own fragment and must be imported in the first line of fragment source:
+**common_header.frag** this is common to all the sources. It defines the common uniforms the `shader_buffers` package uses and the uniforms it adds can be used when writing your own fragment and must be imported in the first line of the fragment source:
 ```
 uniform vec2 iResolution; // The viewport resolution in pixels
 uniform float iTime;      // The shader playback time (in seconds)
@@ -92,7 +93,7 @@ float ratio;
  ```
  It also adds `getFromColor` and `getToColor` functions commonly used in gl-transitions shaders.
 
-There are also other two source to import at the end of the source code:
+There are also other two sources to import at the end of the source code:
 **main_shadertoy.frag**
 and
 **main_gl_transitions.frag**
