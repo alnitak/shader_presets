@@ -1,4 +1,5 @@
 # Shader Presets
+[![Pub](https://img.shields.io/pub/v/shader_presets.svg)](https://pub.dev/packages/shader_presets)
 
 A package that implements some ready-to-use shaders, like transitions from [gl-transitions](https://gl-transitions.com/) and effects from [ShaderToy](https://www.shadertoy.com/).
 
