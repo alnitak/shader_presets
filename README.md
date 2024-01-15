@@ -7,6 +7,8 @@ It uses the [shader_buffers](https://github.com/alnitak/shader_buffers) package 
 
 There are few presets and more can be added quite easily.
 
+Seems that impeller engine is not yet ready, on iOS it should work with [impeller disabled](https://docs.flutter.dev/perf/impeller#ios).
+
 ## Getting Started
 Simply as:
 

@@ -79,6 +79,9 @@ class ShaderPresetCube extends StatelessWidget {
         checkValue: 1,
         operation: (ctrl, result) {
           if (result) {
+            // Temporarly pause listen to gestures till a new pointerDown event
+            // presetController?.getShaderController()?.pausePointerListener();
+
             mainLayer.uniforms!.setValueByIndex(0, 0);
 
             /// Eventually stop the animation because the animation can
