@@ -124,7 +124,7 @@ packages:
     source: hosted
     version: "1.9.1"
   shader_buffers:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: shader_buffers
       sha256: "4ae19eb4d0ed4c17b26547caf9c6b8a8ea1d89c0baff762e31192194cfd8514e"

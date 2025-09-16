@@ -4,6 +4,7 @@ import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:shader_buffers/shader_buffers.dart';
 import 'package:shader_preset_example/page1.dart';
 import 'package:shader_preset_example/page2.dart';
 import 'package:shader_presets/shader_presets.dart';

@@ -12,6 +12,7 @@ dependencies:
   flutter:
     sdk: flutter
 
+  shader_buffers: ^1.1.2
   shader_presets:
     path: ../
 
