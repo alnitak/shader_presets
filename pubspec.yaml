@@ -1,6 +1,6 @@
 name: shader_presets
 description: "A bunch of ready to use shader presets using shader_buffers package"
-version: 1.0.1
+version: 1.0.2
 homepage: https://github.com/alnitak/shader_presets
 issue_tracker: https://github.com/alnitak/shader_presets/issues
 repository: https://github.com/alnitak/shader_presets
@@ -13,8 +13,8 @@ dependencies:
   flutter:
     sdk: flutter
 
-  shader_buffers: #^1.0.1
-    path: ../shader_buffers
+  shader_buffers: ^1.1.2
+    # path: ../shader_buffers
 
 dev_dependencies:
   flutter_test:
