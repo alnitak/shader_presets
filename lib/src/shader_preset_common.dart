@@ -60,10 +60,16 @@ class ShaderPresetCommon extends StatelessWidget {
   /// Callbacks that give back the normalized position (0-1 range)
   final void Function(ShaderController controller, Offset position)?
       onPointerDown;
+
+  /// Callback that give back the normalized position (0-1 range)
   final void Function(ShaderController controller, Offset position)?
       onPointerMove;
+
+  /// Callback that give back the normalized position (0-1 range)
   final void Function(ShaderController controller, Offset position)?
       onPointerUp;
+
+  /// Control the preset shader paramaters
   final ShaderPresetController? presetController;
 
   /// The main layer shader
