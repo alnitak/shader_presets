@@ -1,3 +1,6 @@
+## 1.0.3
+- fix shader build on Windows #2
+
 ## 1.0.2
 - shader_buffers dep updated
 

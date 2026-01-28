@@ -100,7 +100,7 @@ class CardEntry extends StatelessWidget {
             const Spacer(),
             ElevatedButton(
               style: const ButtonStyle(
-                backgroundColor: MaterialStatePropertyAll(Colors.deepPurple),
+                backgroundColor: WidgetStatePropertyAll(Colors.deepPurple),
               ),
               onPressed: () {
                 debugPrint('Card ${index + 1}');

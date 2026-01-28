@@ -1,4 +1,13 @@
-#include "../common/common_header.frag"
+#version 460 core
+#include <flutter/runtime_effect.glsl>
+precision mediump float;
+
+uniform vec2 iResolution;
+uniform float iTime;
+uniform float iFrame;
+uniform vec4 iMouse;
+
+out vec4 fragColor;
 
 uniform sampler2D iChannel0;
 uniform sampler2D iChannel1;
@@ -61,6 +70,10 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
 }
 // ------ END SHADERTOY CODE -----
 
+void main() {
+    float tmp = (iFrame/iFrame) * (iMouse.x/iMouse.x) * 
+        (iTime/iTime) * (iResolution.x/iResolution.x);
+    if (tmp != 1.) tmp = 1.;
 
-
-#include "../common/main_shadertoy.frag"
+    mainImage( fragColor, FlutterFragCoord().xy * tmp );
+}

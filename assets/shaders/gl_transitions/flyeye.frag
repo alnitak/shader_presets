@@ -1,5 +1,27 @@
-#include "../common/common_header.frag"
-#include "../common/common_gl_transitions.frag"
+#version 460 core
+#include <flutter/runtime_effect.glsl>
+precision mediump float;
+
+uniform vec2 iResolution;
+uniform float iTime;
+uniform float iFrame;
+uniform vec4 iMouse;
+
+out vec4 fragColor;
+
+uniform sampler2D iChannel0;
+uniform sampler2D iChannel1;
+
+uniform float progress;
+float ratio;
+
+vec4 getFromColor(vec2 uv) {
+  return texture( iChannel0, vec2(uv.x, 1.0 - uv.y) );
+}
+
+vec4 getToColor(vec2 uv) {
+  return texture( iChannel1, vec2(uv.x, 1.0 - uv.y) );
+}
 
 // https://github.com/gl-transitions/gl-transitions/tree/master/transitions/flyeye.glsl
 
@@ -25,5 +47,12 @@ vec4 transition(vec2 p) {
   return texTo*progress + texFrom*inv;
 }
 
+void main() {
+    float tmp = (iFrame/iFrame) * (iMouse.x/iMouse.x) * 
+        (iTime/iTime) * (iResolution.x/iResolution.x);
+    if (tmp != 1.) tmp = 1.;
 
-#include "../common/main_gl_transitions.frag"
+    ratio = iResolution.x/iResolution.y;
+    vec2 uv = FlutterFragCoord().xy / iResolution.xy * tmp;
+    fragColor = transition(vec2(uv.x, 1.0 - uv.y));
+}
